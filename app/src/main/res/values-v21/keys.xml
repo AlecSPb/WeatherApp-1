@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty"/>
+    <string name="temperature_output">%1$d&#176;%2$s</string>
+    <string name="pref_default_unit_key">C</string>
+    <string name="pref_geolocation_enabled_key">geolocation_enabled</string>
+    <string name="pref_manual_location_key">manual_location</string>
+    <string name="pref_cached_location_key">cached_location</string>
+    <string name="pref_temperature_unit_key">temperature_unit</string>
+    <string name="pref_vibration_enabled_key">vibration_enabled</string>
+    <string name="pref_gradual_awakening_key">gradual_awakening</string>
+    <string name="pref_ringtone_key">ringtone</string>
+    <string name="pref_needs_setup_key">needs_setup</string>
+    <string name="weather_alert_list_cat">weather_alert_list_cat</string>
+    <string name="weather_alert_list_key">weather_alert_list_key</string>
+    <string-array name="pref_temperature_unit_titles">
+        <item>&#176;C</item>
+        <item>&#176;F</item>
+    </string-array>
+    <string-array name="pref_temperature_unit_values">
+        <item>C</item>
+        <item>F</item>
+    </string-array>
+    <string name="pref_temperature_key">temperature_key</string>
+    <string name="pref_location_key">location_key</string>
+    <string name="pref_condition_key">condition_key</string>
+</resources>
