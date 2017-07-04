@@ -3,7 +3,6 @@ package com.philliphsu.clock2;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -13,17 +12,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.philliphsu.clock2.listener.GeocodingServiceListener;
 import com.philliphsu.clock2.listener.WeatherServiceListener;
-import com.philliphsu.clock2.model.*;
+import com.philliphsu.clock2.model.Channel;
+import com.philliphsu.clock2.model.Condition;
+import com.philliphsu.clock2.model.LocationResult;
+import com.philliphsu.clock2.model.Units;
 import com.philliphsu.clock2.service.GoogleMapsGeocodingService;
 import com.philliphsu.clock2.service.WeatherCacheService;
 import com.philliphsu.clock2.service.YahooWeatherService;
-import com.philliphsu.clock2.util.Constants;
 
 import butterknife.Bind;
 
@@ -125,7 +125,7 @@ public class GPSTracker implements WeatherServiceListener,
         Units units = channel.getUnits();
         String weatherTemperature = mContext.getString(
                 R.string.temperature_output, condition.getTemperature(), units.getTemperature());
-        String weatherCondition = condition.getDescription();
+        String weatherCondition = condition.getDescription().toLowerCase();
         String weatherLocation = channel.getLocation();
 
         Log.i("GPSTracker-Condition", condition.toJSON().toString());

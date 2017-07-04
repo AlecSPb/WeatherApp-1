@@ -43,4 +43,14 @@ public final class TimeFormatUtils {
         cal.set(Calendar.MINUTE, minute);
         return formatTime(context, cal.getTimeInMillis());
     }
+
+    public static int getHour(String time) {
+        String[] timeArr = time.split(":");
+        return Integer.parseInt(timeArr[0].trim());
+    }
+
+    public static int getMinutes(String time) {
+        String[] timeArr = time.split(":");
+        return Integer.parseInt(timeArr[1].trim());
+    }
 }

@@ -27,17 +27,12 @@ import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.view.ViewGroup;
 
-import com.philliphsu.clock2.GPSTracker;
 import com.philliphsu.clock2.R;
 import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.misc.AlarmController;
-import com.philliphsu.clock2.alarms.ui.ExpandedAlarmViewHolder;
 import com.philliphsu.clock2.ringtone.playback.AlarmRingtoneService;
 import com.philliphsu.clock2.ringtone.playback.RingtoneService;
-import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.TimeFormatUtils;
-
-import java.util.HashMap;
 
 public class AlarmActivity extends RingtoneActivity<Alarm> {
     private static final String TAG = "AlarmActivity";
@@ -47,27 +42,12 @@ public class AlarmActivity extends RingtoneActivity<Alarm> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        HashMap<String,String> condTime = ExpandedAlarmViewHolder.getCondTimeMap(getApplicationContext());
-        boolean flag = false;
-        for (String time : condTime.values()){
-            if (time != null){
-                flag = true;
-                new GPSTracker(getApplicationContext());
-                break;
-            }
-        }
-
-        //TODO if flag is true there's a condition weather alarm clock
-        if (flag){
-
-        } else {
-            super.onCreate(savedInstanceState);
-            mAlarmController = new AlarmController(this, null);
-            // TODO: If the upcoming alarm notification isn't present, verify other notifications aren't affected.
-            // This could be the case if we're starting a new instance of this activity after leaving the first launch.
-            mAlarmController.removeUpcomingAlarmNotification(getRingingObject());
-            mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        }
+        super.onCreate(savedInstanceState);
+        mAlarmController = new AlarmController(this, null);
+        // TODO: If the upcoming alarm notification isn't present, verify other notifications aren't affected.
+        // This could be the case if we're starting a new instance of this activity after leaving the first launch.
+        mAlarmController.removeUpcomingAlarmNotification(getRingingObject());
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -79,7 +59,9 @@ public class AlarmActivity extends RingtoneActivity<Alarm> {
         //
         // A workaround is to override onNewIntent() and post the missed alarm notification again,
         // AFTER calling through to its base implementation, because it calls finish().
-        mNotificationManager.cancel(TAG, getRingingObject().getIntId());
+        if (getRingingObject() != null) {
+            mNotificationManager.cancel(TAG, getRingingObject().getIntId());
+        }
     }
 
     @Override

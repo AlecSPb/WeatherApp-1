@@ -139,8 +139,12 @@
             <LinearLayout
                 android:id="@+id/weatherConditions"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="38dp"
                 android:orientation="horizontal">
+
+                <ToggleButton
+                    android:id="@+id/sunny"
+                    style="@style/AlarmDayToggle" />
 
                 <ToggleButton
                     android:id="@+id/rain"
@@ -160,6 +164,50 @@
 
                 <ToggleButton
                     android:id="@+id/wind"
+                    style="@style/AlarmDayToggle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/weatherConditionsTime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/sunnyTime"
+                    android:text="@string/not_set"
+                    android:gravity="center"
+                    style="@style/AlarmDayToggle" />
+
+                <TextView
+                    android:id="@+id/rainTime"
+                    android:text="@string/not_set"
+                    android:gravity="center"
+                    style="@style/AlarmDayToggle" />
+
+                <TextView
+                    android:id="@+id/cloudTime"
+                    android:text="@string/not_set"
+                    android:gravity="center"
+                    style="@style/AlarmDayToggle" />
+
+                <TextView
+                    android:id="@+id/snowTime"
+                    android:text="@string/not_set"
+                    android:gravity="center"
+                    style="@style/AlarmDayToggle" />
+
+                <TextView
+                    android:id="@+id/fogTime"
+                    android:text="@string/not_set"
+                    android:gravity="center"
+                    style="@style/AlarmDayToggle" />
+
+                <TextView
+                    android:id="@+id/windTime"
+                    android:text="@string/not_set"
+                    android:gravity="center"
                     style="@style/AlarmDayToggle" />
 
             </LinearLayout>

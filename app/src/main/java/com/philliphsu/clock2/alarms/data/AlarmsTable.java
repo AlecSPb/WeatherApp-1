@@ -54,6 +54,13 @@ public final class AlarmsTable {
     public static final String COLUMN_SATURDAY = "saturday";
     public static final String COLUMN_IGNORE_UPCOMING_RING_TIME = "ignore_upcoming_ring_time";
 
+    public static final String COLUMN_SUNNY = "sunny";
+    public static final String COLUMN_RAINY = "rainy";
+    public static final String COLUMN_CLOUDY = "cloudy";
+    public static final String COLUMN_SNOWY = "snowy";
+    public static final String COLUMN_FOGGY = "foggy";
+    public static final String COLUMN_WINDY = "windy";
+
     // First sort by ring time in ascending order (smaller values first),
     // then break ties by sorting by id in ascending order.
     @Deprecated
@@ -108,7 +115,13 @@ public final class AlarmsTable {
                 + COLUMN_THURSDAY + " INTEGER NOT NULL DEFAULT 0, "
                 + COLUMN_FRIDAY + " INTEGER NOT NULL DEFAULT 0, "
                 + COLUMN_SATURDAY + " INTEGER NOT NULL DEFAULT 0, "
-                + COLUMN_IGNORE_UPCOMING_RING_TIME + " INTEGER NOT NULL);");
+                + COLUMN_IGNORE_UPCOMING_RING_TIME + " INTEGER NOT NULL, "
+                + COLUMN_SUNNY + " TEXT, "
+                + COLUMN_RAINY + " TEXT, "
+                + COLUMN_CLOUDY + " TEXT, "
+                + COLUMN_SNOWY + " TEXT, "
+                + COLUMN_FOGGY + " TEXT, "
+                + COLUMN_WINDY + " TEXT);");
     }
 
     public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

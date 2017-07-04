@@ -22,8 +22,10 @@ package com.philliphsu.clock2.ringtone;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.view.View;
@@ -34,14 +36,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.philliphsu.clock2.BaseActivity;
+import com.philliphsu.clock2.GPSTracker;
+import com.philliphsu.clock2.MainActivity;
 import com.philliphsu.clock2.R;
+import com.philliphsu.clock2.alarms.Alarm;
+import com.philliphsu.clock2.alarms.data.AlarmCursor;
+import com.philliphsu.clock2.alarms.misc.AlarmController;
 import com.philliphsu.clock2.ringtone.playback.RingtoneService;
+import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.LocalBroadcastHelper;
 import com.philliphsu.clock2.util.ParcelableUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.philliphsu.clock2.util.TimeFormatUtils.getHour;
+import static com.philliphsu.clock2.util.TimeFormatUtils.getMinutes;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -139,7 +155,57 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
 
         Intent intent = new Intent(this, getRingtoneServiceClass())
                 .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
-        startService(intent);
+//        startService(intent);
+
+        // Loop over condition to check if anyone has time setted
+        final Alarm oldAlarm = ParcelableUtil.unmarshall(bytes, Alarm.CREATOR);
+        AlarmController alarmCtrl = new AlarmController(getApplicationContext(), null);
+        AlarmCursor cursor = alarmCtrl.getItem(getApplicationContext(), oldAlarm);
+        HashMap<String,String> condTime = cursor.getItem().getWeatherConditions();
+        boolean flag = false;
+        for (String time : condTime.values()){
+            // If one has time setted, get weather information
+            if (time != null){
+                new GPSTracker(getApplicationContext());
+                flag = true;
+                break;
+            }
+        }
+
+        // If at least one condition has time, continue check
+        // Else ring now
+        if (flag) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String condition = preferences.getString(getApplicationContext().getString(R.string.pref_condition_key),null);
+            // Check if current condition of weather is the same setted
+            if (condTime.containsKey(condition)) {
+                String time = condTime.get(condition);
+                String currentTime = new SimpleDateFormat(Constants.TIME_FORMAT, Locale.getDefault()).format(new Date());
+                // Check if time is now, if so ring now
+                // Else schedule with time found
+                if (currentTime.equals(time)) {
+                    startService(intent);
+                } else {
+                    Alarm newAlarm = Alarm.builder()
+                            .hour(getHour(time))
+                            .minutes(getMinutes(time))
+                            .label(oldAlarm.label())
+                            .ringtone(oldAlarm.ringtone())
+                            .vibrates(oldAlarm.vibrates())
+                            .build();
+                    oldAlarm.copyMutableFieldsTo(newAlarm);
+                    AlarmController alarmController = new AlarmController(this, null);
+                    alarmController.scheduleAlarm(newAlarm, false);
+                    Intent intentMain = new Intent(this, MainActivity.class);
+                    intentMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intentMain);
+                }
+            } else {
+                startService(intent);
+            }
+        } else {
+            startService(intent);
+        }
     }
 
     @Override

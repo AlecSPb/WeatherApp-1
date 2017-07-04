@@ -73,6 +73,12 @@ public class AlarmCursor extends BaseItemCursor<Alarm> {
         alarm.setRecurring(FRIDAY, isTrue(AlarmsTable.COLUMN_FRIDAY));
         alarm.setRecurring(SATURDAY, isTrue(AlarmsTable.COLUMN_SATURDAY));
         alarm.ignoreUpcomingRingTime(isTrue(AlarmsTable.COLUMN_IGNORE_UPCOMING_RING_TIME));
+        alarm.setWeatherCondition(AlarmsTable.COLUMN_SUNNY,getString(getColumnIndexOrThrow(AlarmsTable.COLUMN_SUNNY)));
+        alarm.setWeatherCondition(AlarmsTable.COLUMN_RAINY,getString(getColumnIndexOrThrow(AlarmsTable.COLUMN_RAINY)));
+        alarm.setWeatherCondition(AlarmsTable.COLUMN_CLOUDY,getString(getColumnIndexOrThrow(AlarmsTable.COLUMN_CLOUDY)));
+        alarm.setWeatherCondition(AlarmsTable.COLUMN_SNOWY,getString(getColumnIndexOrThrow(AlarmsTable.COLUMN_SNOWY)));
+        alarm.setWeatherCondition(AlarmsTable.COLUMN_FOGGY,getString(getColumnIndexOrThrow(AlarmsTable.COLUMN_FOGGY)));
+        alarm.setWeatherCondition(AlarmsTable.COLUMN_WINDY,getString(getColumnIndexOrThrow(AlarmsTable.COLUMN_WINDY)));
         return alarm;
     }
 }

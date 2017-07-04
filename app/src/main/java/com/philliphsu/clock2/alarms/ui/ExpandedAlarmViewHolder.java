@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -42,22 +43,21 @@ import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog;
 import com.philliphsu.clock2.R;
 import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.misc.AlarmController;
+import com.philliphsu.clock2.alarms.misc.ConditionsOfWeather;
 import com.philliphsu.clock2.alarms.misc.DaysOfWeek;
 import com.philliphsu.clock2.dialogs.RingtonePickerDialog;
 import com.philliphsu.clock2.dialogs.RingtonePickerDialogController;
 import com.philliphsu.clock2.dialogs.TimePickerDialogController;
 import com.philliphsu.clock2.list.OnListItemInteractionListener;
-import com.philliphsu.clock2.model.WeatherConditions;
 import com.philliphsu.clock2.timepickers.Utils;
 import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.FragmentTagUtils;
+import com.philliphsu.clock2.util.TimeFormatUtils;
 
 import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-
-import static com.philliphsu.clock2.util.Constants.DUMMY_VALUE;
 
 /**
  * Created by Phillip Hsu on 7/31/2016.
@@ -71,18 +71,20 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
     @Bind(R.id.vibrate) TempCheckableImageButton mVibrate;
     @Bind({R.id.day0, R.id.day1, R.id.day2, R.id.day3, R.id.day4, R.id.day5, R.id.day6})
     ToggleButton[] mDays;
-    @Bind({R.id.rain, R.id.cloud, R.id.snow, R.id.fog, R.id.wind})
+    @Bind({R.id.sunny, R.id.rain, R.id.cloud, R.id.snow, R.id.fog, R.id.wind})
     ToggleButton[] mWeatherCondition;
     @Bind(R.id.temperatureTextView) TextView temperature;
     @Bind(R.id.conditionTextView) TextView condition;
     @Bind(R.id.locationTextView) TextView location;
+    @Bind({R.id.sunnyTime, R.id.rainTime, R.id.cloudTime, R.id.snowTime, R.id.fogTime, R.id.windTime})
+    TextView[] mWeatherTime;
+    @Bind(R.id.weatherConditionsTime) LinearLayout weatherConditionsTime;
 
     private final ColorStateList mDayToggleColors;
     private final ColorStateList mVibrateColors;
     private final ColorStateList mWeatherCondToggleColors;
     private final RingtonePickerDialogController mRingtonePickerController;
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    SharedPreferences.Editor editor = preferences.edit();
 
     public ExpandedAlarmViewHolder(ViewGroup parent, final OnListItemInteractionListener<Alarm> listener,
                                    AlarmController controller) {
@@ -221,10 +223,12 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
         persistUpdatedAlarm(newAlarm, true);
     }
 
-    @OnClick({ R.id.rain, R.id.cloud, R.id.snow, R.id.fog, R.id.wind})
+    @OnClick({R.id.sunny, R.id.rain, R.id.cloud, R.id.snow, R.id.fog, R.id.wind})
     void onWeatherCondToggled(ToggleButton view) {
-        int position = ((ViewGroup) view.getParent()).indexOfChild(view);
-        final String conditionAtPosition = WeatherConditions.getInstance().getLabel(position);
+        final int position = ((ViewGroup) view.getParent()).indexOfChild(view);
+        final String conditionAtPosition = ConditionsOfWeather.getLabel(position);
+        final Alarm oldAlarm = getAlarm();
+
         // If I'm activating a weather condition the timepicker will appear
         if (view.isChecked()) {
             AppCompatActivity activity = (AppCompatActivity) getContext();
@@ -233,13 +237,26 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
                     fragmentManager, getContext(), new BottomSheetTimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(ViewGroup viewGroup, int hourOfDay, int minute) {
-                    editor.putString(conditionAtPosition, hourOfDay+":"+minute);
-                    editor.apply();
+                    String formattedTime = TimeFormatUtils.formatTime(getContext(), hourOfDay, minute);
+//                    editor.putString(conditionAtPosition, formattedTime);
+//                    editor.apply();
+
+//                    Alarm newAlarm = oldAlarm.toBuilder().build();
+                    oldAlarm.setWeatherCondition(conditionAtPosition, formattedTime);
+                    persistUpdatedAlarm(oldAlarm, false);
+
+                    mWeatherTime[position].setText(formattedTime);
+                    weatherConditionsTime.setVisibility(View.VISIBLE);
                 }
             });
             mTimePickerDialogController.show(0, 0, null);
         } else {
-            editor.putString(conditionAtPosition, null).apply();
+//            editor.putString(conditionAtPosition, null).apply();
+//            Alarm newAlarm = oldAlarm.toBuilder().build();
+            oldAlarm.removeWeatherCondition(conditionAtPosition);
+            mWeatherTime[position].setText(getContext().getString(R.string.not_set));
+            checkWeatherTimeVisibility();
+            persistUpdatedAlarm(oldAlarm, false);
         }
     }
 
@@ -275,11 +292,12 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
     private void bindWeatherCondition(Alarm alarm) {
         for (int i = 0; i < mWeatherCondition.length; i++) {
             mWeatherCondition[i].setTextColor(mWeatherCondToggleColors);
-            String label = WeatherConditions.getInstance().getLabel(i);
+            String label = ConditionsOfWeather.getLabel(i);
             mWeatherCondition[i].setTextOn(label);
             mWeatherCondition[i].setTextOff(label);
-            if (preferences.getString(label, null) != null) {
+            if (alarm.getWeatherCondition(label) != null){
                 mWeatherCondition[i].setChecked(true);
+                mWeatherTime[i].setText(alarm.getWeatherCondition(label));
             } else {
                 mWeatherCondition[i].setChecked(false);
             }
@@ -295,6 +313,19 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
             condition.setText(cond);
         if (location != null && loc != null)
             location.setText(loc);
+
+        checkWeatherTimeVisibility();
+    }
+
+    private void checkWeatherTimeVisibility() {
+        boolean showPanel = false;
+        for (ToggleButton toggleBtn : mWeatherCondition) {
+            if (toggleBtn.isChecked()){
+                showPanel = true;
+                break;
+            }
+        }
+        weatherConditionsTime.setVisibility(showPanel ? View.VISIBLE : View.INVISIBLE);
     }
 
     private Uri getSelectedRingtoneUri() {

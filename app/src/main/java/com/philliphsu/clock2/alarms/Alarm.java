@@ -23,14 +23,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.auto.value.AutoValue;
+import com.philliphsu.clock2.alarms.misc.ConditionsOfWeather;
 import com.philliphsu.clock2.data.ObjectWithId;
 
 import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.NUM_WEATHER_CONDITIONS;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.NUM_DAYS;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.SATURDAY;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.SUNDAY;
@@ -46,6 +49,7 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
     private long snoozingUntilMillis;
     private boolean enabled;
     private final boolean[] recurringDays = new boolean[NUM_DAYS];
+    private final String[] weatherConditions = ConditionsOfWeather.getInstance().keySet().toArray(new String[ConditionsOfWeather.getInstance().size()]);
     private boolean ignoreUpcomingRingTime;
     // ====================================================
 
@@ -68,10 +72,11 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
         target.enabled = this.enabled;
         System.arraycopy(this.recurringDays, 0, target.recurringDays, 0, NUM_DAYS);
         target.ignoreUpcomingRingTime = this.ignoreUpcomingRingTime;
+        System.arraycopy(this.weatherConditions, 0, target.weatherConditions, 0, NUM_WEATHER_CONDITIONS);
     }
 
     public static Builder builder() {
-        // Unfortunately, default values must be provided for generated Builders.
+        // Unfortunately, default valoues must be provided for generated Builders.
         // Fields that were not set when build() is called will throw an exception.
         return new AutoValue_Alarm.Builder()
                 .hour(0)
@@ -149,6 +154,22 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
 
     public boolean isIgnoringUpcomingRingTime() {
         return ignoreUpcomingRingTime;
+    }
+
+    public void setWeatherCondition (String condition, String value) throws IllegalStateException {
+        ConditionsOfWeather.setConditionValue(condition, value);
+    }
+
+    public String getWeatherCondition (String condition) throws IllegalStateException {
+        return ConditionsOfWeather.getConditionValue(condition);
+    }
+
+    public HashMap<String, String> getWeatherConditions () {
+        return ConditionsOfWeather.getConditions();
+    }
+
+    public void removeWeatherCondition (String condition) throws IllegalStateException {
+        ConditionsOfWeather.removeConditionValue(condition);
     }
 
     public long ringsAt() {

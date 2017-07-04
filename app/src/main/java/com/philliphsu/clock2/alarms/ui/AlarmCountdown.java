@@ -233,8 +233,8 @@ public class AlarmCountdown extends TextView {
     private synchronized void updateText(long now) {
         mNow = now;
         long millis = mBase - now;
-//        seconds /= 1000;
-        // This only shows HH:MM:SS, but we need days as well!
+//        seconds /= 1000;ut we need days as well!
+        // This only shows HH:MM:SS, b
 //        String text = DateUtils.formatElapsedTime(mRecycle, seconds);
         String text = DurationUtils.toString(getContext(), millis, true/*abbreviate labels*/);
         

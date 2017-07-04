@@ -26,6 +26,8 @@ import android.database.Cursor;
 import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.data.DatabaseTableManager;
 
+import java.util.ArrayList;
+
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.FRIDAY;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.MONDAY;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.SATURDAY;
@@ -75,6 +77,7 @@ public class AlarmsTableManager extends DatabaseTableManager<Alarm> {
     @Override
     protected ContentValues toContentValues(Alarm alarm) {
         ContentValues values = new ContentValues();
+        ArrayList<String> conditions = new ArrayList<>(alarm.getWeatherConditions().values());
         values.put(AlarmsTable.COLUMN_HOUR, alarm.hour());
         values.put(AlarmsTable.COLUMN_MINUTES, alarm.minutes());
         values.put(AlarmsTable.COLUMN_LABEL, alarm.label());
@@ -91,6 +94,12 @@ public class AlarmsTableManager extends DatabaseTableManager<Alarm> {
         values.put(AlarmsTable.COLUMN_FRIDAY, alarm.isRecurring(FRIDAY));
         values.put(AlarmsTable.COLUMN_SATURDAY, alarm.isRecurring(SATURDAY));
         values.put(AlarmsTable.COLUMN_IGNORE_UPCOMING_RING_TIME, alarm.isIgnoringUpcomingRingTime());
+        values.put(AlarmsTable.COLUMN_SUNNY, conditions.get(0));
+        values.put(AlarmsTable.COLUMN_RAINY, conditions.get(1));
+        values.put(AlarmsTable.COLUMN_CLOUDY, conditions.get(2));
+        values.put(AlarmsTable.COLUMN_SNOWY, conditions.get(3));
+        values.put(AlarmsTable.COLUMN_FOGGY, conditions.get(4));
+        values.put(AlarmsTable.COLUMN_WINDY, conditions.get(5));
         return values;
     }
 

@@ -168,4 +168,8 @@
     <string name="foggy">foggy</string>
     <string name="windy">windy</string>
     <!-- END Weather alarm clock condition -->
+
+    <string name="condition_time_tag">condition.time.map</string>
+
+    <string name="not_set"/>
 </resources>

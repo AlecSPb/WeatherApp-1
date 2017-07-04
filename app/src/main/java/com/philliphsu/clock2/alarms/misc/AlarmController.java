@@ -23,9 +23,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
@@ -35,17 +33,19 @@ import com.philliphsu.clock2.R;
 import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.background.PendingAlarmScheduler;
 import com.philliphsu.clock2.alarms.background.UpcomingAlarmReceiver;
+import com.philliphsu.clock2.alarms.data.AlarmCursor;
 import com.philliphsu.clock2.alarms.data.AlarmsTableManager;
-import com.philliphsu.clock2.alarms.ui.ExpandedAlarmViewHolder;
 import com.philliphsu.clock2.ringtone.AlarmActivity;
 import com.philliphsu.clock2.ringtone.playback.AlarmRingtoneService;
-import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.ContentIntentUtils;
 import com.philliphsu.clock2.util.DelayedSnackbarHandler;
 import com.philliphsu.clock2.util.DurationUtils;
 import com.philliphsu.clock2.util.ParcelableUtil;
+import com.philliphsu.clock2.util.TimeFormatUtils;
 
-import java.util.HashMap;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 import static android.app.PendingIntent.FLAG_NO_CREATE;
@@ -101,7 +101,25 @@ public final class AlarmController {
 
         AlarmManager am = (AlarmManager) mAppContext.getSystemService(Context.ALARM_SERVICE);
 
-        final long ringAt = alarm.isSnoozed() ? alarm.snoozingUntil() : alarm.ringsAt();
+        long ringAt = alarm.isSnoozed() ? alarm.snoozingUntil() : alarm.ringsAt();
+        long condRingTime = -1;
+        for (String condition : alarm.getWeatherConditions().keySet()){
+            if(alarm.getWeatherCondition(condition) != null){
+                String time = alarm.getWeatherCondition(condition);
+                Calendar calendar = new GregorianCalendar();
+                calendar.set(Calendar.HOUR_OF_DAY, TimeFormatUtils.getHour(time));
+                calendar.set(Calendar.MINUTE, TimeFormatUtils.getMinutes(time));
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                condRingTime = calendar.getTimeInMillis();
+
+                if (condRingTime <= System.currentTimeMillis()){
+                    condRingTime += TimeUnit.DAYS.toMillis(1);
+                }
+            }
+        }
+        if (condRingTime != -1 && condRingTime < ringAt)
+            ringAt = condRingTime;
         final PendingIntent alarmIntent = alarmIntent(alarm, false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             PendingIntent showIntent = ContentIntentUtils.create(mAppContext, MainActivity.PAGE_ALARMS, alarm.getId());
@@ -235,6 +253,10 @@ public final class AlarmController {
                 mTableManager.updateItem(alarm.getId(), alarm);
             }
         }).start();
+    }
+
+    public AlarmCursor getItem(final Context context, final Alarm alarm) {
+        return new AlarmsTableManager(context).queryItem(alarm.getId());
     }
 
     private PendingIntent alarmIntent(Alarm alarm, boolean retrievePrevious) {

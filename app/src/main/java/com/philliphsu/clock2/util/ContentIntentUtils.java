@@ -22,15 +22,10 @@ package com.philliphsu.clock2.util;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.philliphsu.clock2.MainActivity;
 import com.philliphsu.clock2.list.RecyclerViewFragment;
-import com.philliphsu.clock2.model.WeatherConditions;
-
-import java.util.HashMap;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 

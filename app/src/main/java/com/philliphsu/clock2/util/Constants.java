@@ -7,6 +7,7 @@ import com.philliphsu.clock2.R;
 public class Constants {
     private static  String[] WEATHER_CONDITION;
     public static String COND_TIME_MAP = "condTime";
+
     public static void setWeatherConditions(Context ctx) {
         WEATHER_CONDITION = new String[] {
                 ctx.getResources().getString(R.string.rainy),
