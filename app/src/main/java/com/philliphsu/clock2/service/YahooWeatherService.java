@@ -44,7 +44,6 @@ public class YahooWeatherService {
     }
 
     public void refreshWeather(String location) {
-
         new AsyncTask<String, Void, Channel>() {
             @Override
             protected Channel doInBackground(String[] locations) {

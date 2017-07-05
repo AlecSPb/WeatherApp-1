@@ -23,17 +23,23 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.auto.value.AutoValue;
-import com.philliphsu.clock2.alarms.misc.ConditionsOfWeather;
 import com.philliphsu.clock2.data.ObjectWithId;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.CLOUDY;
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.FOGGY;
 import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.NUM_WEATHER_CONDITIONS;
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.RAINY;
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.SNOWY;
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.SUNNY;
+import static com.philliphsu.clock2.alarms.misc.ConditionsOfWeather.WINDY;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.NUM_DAYS;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.SATURDAY;
 import static com.philliphsu.clock2.alarms.misc.DaysOfWeek.SUNDAY;
@@ -49,7 +55,7 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
     private long snoozingUntilMillis;
     private boolean enabled;
     private final boolean[] recurringDays = new boolean[NUM_DAYS];
-    private final String[] weatherConditions = ConditionsOfWeather.getInstance().keySet().toArray(new String[ConditionsOfWeather.getInstance().size()]);
+    private LinkedHashMap<String,String> weatherConditions = initWeatherConditions();
     private boolean ignoreUpcomingRingTime;
     // ====================================================
 
@@ -72,7 +78,7 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
         target.enabled = this.enabled;
         System.arraycopy(this.recurringDays, 0, target.recurringDays, 0, NUM_DAYS);
         target.ignoreUpcomingRingTime = this.ignoreUpcomingRingTime;
-        System.arraycopy(this.weatherConditions, 0, target.weatherConditions, 0, NUM_WEATHER_CONDITIONS);
+        target.weatherConditions = this.weatherConditions;
     }
 
     public static Builder builder() {
@@ -156,20 +162,47 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
         return ignoreUpcomingRingTime;
     }
 
+    public LinkedHashMap<String, String> initWeatherConditions () {
+        weatherConditions = new LinkedHashMap<>(NUM_WEATHER_CONDITIONS);
+        weatherConditions.put(SUNNY, null);
+        weatherConditions.put(RAINY, null);
+        weatherConditions.put(CLOUDY, null);
+        weatherConditions.put(SNOWY, null);
+        weatherConditions.put(FOGGY, null);
+        weatherConditions.put(WINDY, null);
+        return weatherConditions;
+    }
+
     public void setWeatherCondition (String condition, String value) throws IllegalStateException {
-        ConditionsOfWeather.setConditionValue(condition, value);
+        if (weatherConditions.containsKey(condition)) {
+            weatherConditions.put(condition, value);
+        } else {
+            throw new IllegalStateException("Condition" + condition + " is not included in:" + weatherConditions.keySet());
+        }
     }
 
     public String getWeatherCondition (String condition) throws IllegalStateException {
-        return ConditionsOfWeather.getConditionValue(condition);
+        if (weatherConditions.containsKey(condition)) {
+            return weatherConditions.get(condition);
+        } else {
+            throw new IllegalStateException("Condition" + condition + " is not included in:" + weatherConditions.keySet());
+        }
     }
 
-    public HashMap<String, String> getWeatherConditions () {
-        return ConditionsOfWeather.getConditions();
+    public LinkedHashMap<String, String> getWeatherConditions () {
+        return weatherConditions;
     }
 
     public void removeWeatherCondition (String condition) throws IllegalStateException {
-        ConditionsOfWeather.removeConditionValue(condition);
+        if (weatherConditions.containsKey(condition)) {
+            weatherConditions.put(condition, null);
+        } else {
+            throw new IllegalStateException("Condition" + condition + " is not included in:" + weatherConditions.keySet());
+        }
+    }
+
+    public String getLabel (int position) throws IllegalStateException {
+        return new ArrayList<>(weatherConditions.keySet()).get(position);
     }
 
     public long ringsAt() {
@@ -274,6 +307,7 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
         dest.writeLong(snoozingUntilMillis);
         dest.writeInt(enabled ? 1 : 0);
         dest.writeBooleanArray(recurringDays);
+        dest.writeSerializable(weatherConditions);
         dest.writeInt(ignoreUpcomingRingTime ? 1 : 0);
     }
 
@@ -289,6 +323,7 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
         alarm.snoozingUntilMillis = in.readLong();
         alarm.enabled = in.readInt() != 0;
         in.readBooleanArray(alarm.recurringDays);
+        alarm.weatherConditions = (LinkedHashMap<String, String>) in.readSerializable();
         alarm.ignoreUpcomingRingTime = in.readInt() != 0;
         return alarm;
     }

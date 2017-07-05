@@ -25,16 +25,12 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.philliphsu.clock2.GPSTracker;
 import com.philliphsu.clock2.MainActivity;
 import com.philliphsu.clock2.R;
-import com.philliphsu.clock2.model.*;
 import com.philliphsu.clock2.listener.GeocodingServiceListener;
-import com.philliphsu.clock2.listener.WeatherServiceListener;
-import com.philliphsu.clock2.model.Channel;
 import com.philliphsu.clock2.model.LocationResult;
-import com.philliphsu.clock2.util.ConfigurationUtils;
 
 import static com.philliphsu.clock2.util.Constants.ALARM_OFF2;
 import static com.philliphsu.clock2.util.Constants.ALARM_ON;
@@ -46,7 +42,7 @@ import static com.philliphsu.clock2.util.Constants.VOLUME_INCREASE_DELAY;
 import static com.philliphsu.clock2.util.Constants.VOLUME_INCREASE_STEP;
 
 public class RingtonePlayingService extends Service implements
-        WeatherServiceListener, GeocodingServiceListener, LocationListener {
+        /*WeatherServiceListener,*/ GeocodingServiceListener, LocationListener {
 
     private int startId;
     private MediaPlayer mediaPlayer;
@@ -86,12 +82,12 @@ public class RingtonePlayingService extends Service implements
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        weatherService = new YahooWeatherService(this);
-        weatherService.setTemperatureUnit(preferences.getString(getString(R.string.pref_temperature_unit_key), null));
+        /*weatherService = new YahooWeatherService(this);
+        weatherService.setTemperatureUnit(preferences.getString(getString(R.string.pref_temperature_unit_key), null));*/
         cacheService = new WeatherCacheService(this);
         geocodingService = new GoogleMapsGeocodingService(this);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        String location = null;
+        /*String location = null;
 
         if (preferences.getBoolean(getString(R.string.pref_geolocation_enabled_key), true)) {
             String locationCache = preferences.getString(getString(R.string.pref_cached_location_key), null);
@@ -107,7 +103,8 @@ public class RingtonePlayingService extends Service implements
 
         if (location != null) {
             weatherService.refreshWeather(location);
-        }
+        }*/
+        new GPSTracker(getApplicationContext());
 
         // fetch the extra string from the alarm on/alarm off values
         Bundle bundle = intent.getExtras();
@@ -253,42 +250,45 @@ public class RingtonePlayingService extends Service implements
         locationManager.requestSingleUpdate(locationCriteria, this, null);
     }
 
-    @Override
-    public void serviceSuccess(Channel channel) {
-        Condition condition = channel.getItem().getCondition();
-        weatherCondition = condition.getDescription();
-
-        cacheService.save(channel);
-    }
-
-    @Override
-    public void serviceFailure(Exception exception) {
-        // display error if this is the second failure
-        if (weatherServicesHasFailed) {
-            Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
-        } else {
-            // error doing reverse geocoding, load weather data from cache
-            weatherServicesHasFailed = true;
-            // OPTIONAL: let the user know an error has occurred then fallback to the cached data
-            Toast.makeText(this, exception.getMessage(), Toast.LENGTH_SHORT).show();
-
-            cacheService.load(this);
-        }
-    }
+//    @Override
+//    public void serviceSuccess(Channel channel) {
+//        Condition condition = channel.getItem().getCondition();
+//        weatherCondition = condition.getDescription();
+//
+//        cacheService.save(channel);
+//    }
+//
+//    @Override
+//    public void serviceFailure(Exception exception) {
+//        // display error if this is the second failure
+//        if (weatherServicesHasFailed) {
+//            Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
+//        } else {
+//            // error doing reverse geocoding, load weather data from cache
+//            weatherServicesHasFailed = true;
+//            // OPTIONAL: let the user know an error has occurred then fallback to the cached data
+//            Toast.makeText(this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+//
+//            cacheService.load(this);
+//        }
+//    }
 
     @Override
     public void geocodeSuccess(LocationResult location) {
-        weatherService.refreshWeather(location.getAddress());
+//        weatherService.refreshWeather(location.getAddress());
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(getString(R.string.pref_cached_location_key), location.getAddress());
         editor.apply();
+
+        GPSTracker gpsTracker = new GPSTracker(getApplicationContext());
     }
 
     @Override
     public void geocodeFailure() {
         // GeoCoding failed, try loading weather data from the cache
-        cacheService.load(this);
+        //TODO USE VOLLEY HERE ALSO
+//        cacheService.load(this);
     }
 
     @Override

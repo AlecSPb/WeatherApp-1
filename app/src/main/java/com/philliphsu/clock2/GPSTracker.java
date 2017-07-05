@@ -3,54 +3,68 @@ package com.philliphsu.clock2;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.philliphsu.clock2.listener.GeocodingServiceListener;
-import com.philliphsu.clock2.listener.WeatherServiceListener;
 import com.philliphsu.clock2.model.Channel;
 import com.philliphsu.clock2.model.Condition;
 import com.philliphsu.clock2.model.LocationResult;
 import com.philliphsu.clock2.model.Units;
 import com.philliphsu.clock2.service.GoogleMapsGeocodingService;
-import com.philliphsu.clock2.service.WeatherCacheService;
-import com.philliphsu.clock2.service.YahooWeatherService;
 
-import butterknife.Bind;
+import org.json.JSONObject;
 
-public class GPSTracker implements WeatherServiceListener,
+import static com.philliphsu.clock2.util.Constants.APOSTROPHE;
+import static com.philliphsu.clock2.util.Constants.CHANNEL;
+import static com.philliphsu.clock2.util.Constants.COUNT;
+import static com.philliphsu.clock2.util.Constants.QUERY;
+import static com.philliphsu.clock2.util.Constants.RESULTS;
+import static com.philliphsu.clock2.util.Constants.YAHOO_ENDPOINT;
+import static com.philliphsu.clock2.util.Constants.YAHOO_QUERY;
+
+public class GPSTracker implements /*WeatherServiceListener,*/
         GeocodingServiceListener, LocationListener {
     private final Context mContext;
-    private YahooWeatherService weatherService;
-    private WeatherCacheService cacheService;
+    /*private YahooWeatherService weatherService;
+    private WeatherCacheService cacheService;*/
     private GoogleMapsGeocodingService geocodingService;
-    private boolean weatherServicesHasFailed = false;
+    /*private boolean weatherServicesHasFailed = false;*/
     private SharedPreferences preferences = null;
-    @Bind(R.id.temperatureTextView) TextView temperatureTv;
-    @Bind(R.id.conditionTextView) TextView conditionTv;
-    @Bind(R.id.locationTextView) TextView locationTv;
 
     public static final String
-            ACTION_LOCATION_BROADCAST = GPSTracker.class.getName() + "LocationBroadcast";
+            ACTION_LOCATION_BROADCAST = GPSTracker.class.getName() + "LocationBroadcast",
+            EXTRA_TEMPERATURE = "extra_temperature",
+            EXTRA_CONDITION = "extra_condition",
+            EXTRA_LOCATION = "extra_location";
 
     public GPSTracker(Context context) {
         this.mContext = context;
 
         // Initialize services
         preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        weatherService = new YahooWeatherService(this);
+        /*weatherService = new YahooWeatherService(this);
         weatherService.setTemperatureUnit(preferences.getString(
                 mContext.getString(R.string.pref_temperature_unit_key), null));
-        cacheService = new WeatherCacheService(mContext);
+        cacheService = new WeatherCacheService(mContext);*/
         geocodingService = new GoogleMapsGeocodingService(this);
 
         setup();
@@ -72,7 +86,8 @@ public class GPSTracker implements WeatherServiceListener,
         }
 
         if (location != null) {
-            weatherService.refreshWeather(location);
+            //weatherService.refreshWeather(location);
+            refreshWeather(location);
         }
     }
 
@@ -119,7 +134,7 @@ public class GPSTracker implements WeatherServiceListener,
     public void onProviderDisabled(String s) {
     }
 
-    @Override
+    /*@Override
     public void serviceSuccess(Channel channel) {
         Condition condition = channel.getItem().getCondition();
         Units units = channel.getUnits();
@@ -162,10 +177,12 @@ public class GPSTracker implements WeatherServiceListener,
             cacheService.load(this);
         }
     }
+    */
 
     @Override
     public void geocodeSuccess(LocationResult location) {
-        weatherService.refreshWeather(location.getAddress());
+        /*weatherService.refreshWeather(location.getAddress());*/
+        refreshWeather(location.getAddress());
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(mContext.getString(R.string.pref_cached_location_key), location.getAddress());
@@ -175,6 +192,70 @@ public class GPSTracker implements WeatherServiceListener,
     @Override
     public void geocodeFailure() {
         // GeoCoding failed, try loading weather data from the cache
-        cacheService.load(this);
+        //TODO USE VOLLEY HERE ALSO
+        //cacheService.load(this);
+    }
+
+    public void refreshWeather(String location) {
+        // Create a single queue
+        final Context ctx = this.mContext;
+        RequestQueue queue = Volley.newRequestQueue(ctx);
+
+        String unit = preferences.getString(
+                mContext.getString(R.string.pref_temperature_unit_key), null);
+        String yql = String.format(YAHOO_QUERY + unit + APOSTROPHE, location);
+        String endpoint = String.format(YAHOO_ENDPOINT, Uri.encode(yql));
+
+        JsonObjectRequest getRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        JSONObject queryResults = data.optJSONObject(QUERY);
+                        if (queryResults != null) {
+                            if (queryResults.optInt(COUNT) == 0) {
+                                Toast.makeText(ctx, "ERRORE", Toast.LENGTH_LONG).show();
+                            } else {
+                                Channel channel = new Channel();
+                                JSONObject channelJSON =
+                                        queryResults.optJSONObject(RESULTS).optJSONObject(CHANNEL);
+                                channel.populate(channelJSON);
+
+                                Condition condition = channel.getItem().getCondition();
+                                Units units = channel.getUnits();
+                                String weatherTemperature = mContext.getString(
+                                        R.string.temperature_output, condition.getTemperature(), units.getTemperature());
+                                String weatherCondition = condition.getDescription().toLowerCase();
+                                String weatherLocation = channel.getLocation();
+                                sendBroadcastMessage(weatherTemperature, weatherCondition, weatherLocation);
+                                Log.i("GPSTracker-Condition", condition.toJSON().toString());
+                                Log.i("GPSTracker-Units", units.toJSON().toString());
+                                Log.i("GPSTracker-Temp", weatherTemperature);
+                                Log.i("GPSTracker-Cond", weatherCondition);
+                                Log.i("GPSTracker-Loc", weatherLocation);
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+        // add it to the Request Queue
+        queue.add(getRequest);
+    }
+
+    private void sendBroadcastMessage(String temperature,
+                                      String condition,
+                                      String location) {
+        Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
+        intent.putExtra(EXTRA_TEMPERATURE, temperature);
+        intent.putExtra(EXTRA_CONDITION, condition);
+        intent.putExtra(EXTRA_LOCATION, location);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 }

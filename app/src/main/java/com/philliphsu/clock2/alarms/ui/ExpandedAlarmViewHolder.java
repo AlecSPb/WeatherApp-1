@@ -19,7 +19,10 @@
 
 package com.philliphsu.clock2.alarms.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
@@ -29,6 +32,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -40,21 +44,18 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog;
+import com.philliphsu.clock2.GPSTracker;
 import com.philliphsu.clock2.R;
 import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.misc.AlarmController;
-import com.philliphsu.clock2.alarms.misc.ConditionsOfWeather;
 import com.philliphsu.clock2.alarms.misc.DaysOfWeek;
 import com.philliphsu.clock2.dialogs.RingtonePickerDialog;
 import com.philliphsu.clock2.dialogs.RingtonePickerDialogController;
 import com.philliphsu.clock2.dialogs.TimePickerDialogController;
 import com.philliphsu.clock2.list.OnListItemInteractionListener;
 import com.philliphsu.clock2.timepickers.Utils;
-import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.FragmentTagUtils;
 import com.philliphsu.clock2.util.TimeFormatUtils;
-
-import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -225,12 +226,17 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
 
     @OnClick({R.id.sunny, R.id.rain, R.id.cloud, R.id.snow, R.id.fog, R.id.wind})
     void onWeatherCondToggled(ToggleButton view) {
+        for (TextView tv : mWeatherTime){
+            tv.setText(getContext().getString(R.string.not_set));
+        }
+
         final int position = ((ViewGroup) view.getParent()).indexOfChild(view);
-        final String conditionAtPosition = ConditionsOfWeather.getLabel(position);
+        final String conditionAtPosition = getAlarm().getLabel(position);
         final Alarm oldAlarm = getAlarm();
 
         // If I'm activating a weather condition the timepicker will appear
         if (view.isChecked()) {
+            final String selectedCond = (String) view.getTextOn();
             AppCompatActivity activity = (AppCompatActivity) getContext();
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             TimePickerDialogController mTimePickerDialogController = new TimePickerDialogController(
@@ -238,11 +244,7 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
                 @Override
                 public void onTimeSet(ViewGroup viewGroup, int hourOfDay, int minute) {
                     String formattedTime = TimeFormatUtils.formatTime(getContext(), hourOfDay, minute);
-//                    editor.putString(conditionAtPosition, formattedTime);
-//                    editor.apply();
-
-//                    Alarm newAlarm = oldAlarm.toBuilder().build();
-                    oldAlarm.setWeatherCondition(conditionAtPosition, formattedTime);
+                    oldAlarm.setWeatherCondition(selectedCond, formattedTime);
                     persistUpdatedAlarm(oldAlarm, false);
 
                     mWeatherTime[position].setText(formattedTime);
@@ -251,8 +253,6 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
             });
             mTimePickerDialogController.show(0, 0, null);
         } else {
-//            editor.putString(conditionAtPosition, null).apply();
-//            Alarm newAlarm = oldAlarm.toBuilder().build();
             oldAlarm.removeWeatherCondition(conditionAtPosition);
             mWeatherTime[position].setText(getContext().getString(R.string.not_set));
             checkWeatherTimeVisibility();
@@ -290,9 +290,13 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
     }
 
     private void bindWeatherCondition(Alarm alarm) {
+        for (TextView tv : mWeatherTime){
+            tv.setText(getContext().getString(R.string.not_set));
+        }
+
         for (int i = 0; i < mWeatherCondition.length; i++) {
             mWeatherCondition[i].setTextColor(mWeatherCondToggleColors);
-            String label = ConditionsOfWeather.getLabel(i);
+            String label = alarm.getLabel(i);
             mWeatherCondition[i].setTextOn(label);
             mWeatherCondition[i].setTextOff(label);
             if (alarm.getWeatherCondition(label) != null){
@@ -303,16 +307,19 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
             }
         }
 
-        String temp = preferences.getString(getContext().getString(R.string.pref_temperature_key), null);
-        String cond = preferences.getString(getContext().getString(R.string.pref_condition_key), null);
-        String loc = preferences.getString(getContext().getString(R.string.pref_location_key), null);
-
-        if (temperature != null && temp != null)
-            temperature.setText(temp);
-        if (condition != null && cond != null)
-            condition.setText(cond);
-        if (location != null && loc != null)
-            location.setText(loc);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        if (temperature != null)
+                            temperature.setText(intent.getStringExtra(GPSTracker.EXTRA_TEMPERATURE));
+                        if (condition != null)
+                            condition.setText(intent.getStringExtra(GPSTracker.EXTRA_CONDITION));
+                        if (location != null)
+                            location.setText(intent.getStringExtra(GPSTracker.EXTRA_LOCATION));
+                    }
+                }, new IntentFilter(GPSTracker.ACTION_LOCATION_BROADCAST)
+        );
 
         checkWeatherTimeVisibility();
     }
@@ -347,14 +354,5 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
 
     private String makeTag(@IdRes int viewId) {
         return FragmentTagUtils.makeTag(ExpandedAlarmViewHolder.class, viewId, getItemId());
-    }
-
-    public static HashMap<String, String> getCondTimeMap(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        HashMap<String,String> condTime = new HashMap<>();
-        for (String condition : Constants.getWeatherCondition()){
-            condTime.put(condition, preferences.getString(condition, null));
-        }
-        return condTime;
     }
 }

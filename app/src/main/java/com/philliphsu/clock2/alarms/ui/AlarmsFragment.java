@@ -105,10 +105,8 @@ public class AlarmsFragment extends RecyclerViewFragment<Alarm, BaseAlarmViewHol
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume()");
-        // Collapse the expanded alarm in order to refresh the position
-        getAdapter().collapse(getAdapter().getExpandedPosition());
         new GPSTracker(getContext());
+        Log.d(TAG, "onResume()");
 
         // Show the pending Snackbar, if any, that was prepared for us
         // by another app component.
