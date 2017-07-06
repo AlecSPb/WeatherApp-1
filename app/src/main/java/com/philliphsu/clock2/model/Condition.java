@@ -26,20 +26,8 @@ public class Condition implements JSONPopulator {
         return temperature;
     }
 
-    public int getHighTemperature() {
-        return highTemperature;
-    }
-
-    public int getLowTemperature() {
-        return lowTemperature;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public String getDay() {
-        return day;
     }
 
     @Override

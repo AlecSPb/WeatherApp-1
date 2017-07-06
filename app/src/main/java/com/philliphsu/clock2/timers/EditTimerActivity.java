@@ -31,10 +31,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.philliphsu.clock2.dialogs.AddLabelDialog;
-import com.philliphsu.clock2.dialogs.AddLabelDialogController;
 import com.philliphsu.clock2.BaseActivity;
 import com.philliphsu.clock2.R;
+import com.philliphsu.clock2.dialogs.AddLabelDialog;
+import com.philliphsu.clock2.dialogs.AddLabelDialogController;
 import com.philliphsu.clock2.util.FragmentTagUtils;
 
 import butterknife.Bind;
@@ -88,11 +88,6 @@ public class EditTimerActivity extends BaseActivity implements AddLabelDialog.On
     protected int menuResId() {
         // TODO: Define a menu res with a save item
         return 0;
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
     }
 
     @Override
@@ -173,9 +168,9 @@ public class EditTimerActivity extends BaseActivity implements AddLabelDialog.On
     
     @OnLongClick(R.id.backspace)
     boolean clear() {
-        mHour.setText("00");
-        mMinute.setText("00");
-        mSecond.setText("00");
+        mHour.setText(R.string.double_zero);
+        mMinute.setText(R.string.double_zero);
+        mSecond.setText(R.string.double_zero);
         mHour.requestFocus(); // TOneverDO: call after setSelection(0), or else the cursor returns to the end of the text
         mHour.setSelection(0); // always move the cursor WHILE the field is focused, NEVER focus after!
         mMinute.setSelection(0);

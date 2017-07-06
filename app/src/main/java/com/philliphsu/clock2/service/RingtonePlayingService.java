@@ -48,17 +48,15 @@ public class RingtonePlayingService extends Service implements
     private MediaPlayer mediaPlayer;
     private Ringtone defaultRingtone;
     private boolean isRunning;
-    private YahooWeatherService weatherService;
+    /*private YahooWeatherService weatherService;*/
     private SharedPreferences preferences;
     private WeatherCacheService cacheService;
-    private boolean weatherServicesHasFailed = false;
+    /*private boolean weatherServicesHasFailed = false;*/
     private GoogleMapsGeocodingService geocodingService;
     private Vibrator vibrator;
     private float mVolumeLevel;
     private Handler mHandler = new Handler();
     private int maxVolume;
-    private static boolean disableWifi = false;
-    private static boolean disableMobileData = false;
     private String weatherCondition;
 
     private Runnable mVolumeRunnable = new Runnable() {
@@ -104,7 +102,6 @@ public class RingtonePlayingService extends Service implements
         if (location != null) {
             weatherService.refreshWeather(location);
         }*/
-        new GPSTracker(getApplicationContext());
 
         // fetch the extra string from the alarm on/alarm off values
         Bundle bundle = intent.getExtras();
@@ -281,7 +278,7 @@ public class RingtonePlayingService extends Service implements
         editor.putString(getString(R.string.pref_cached_location_key), location.getAddress());
         editor.apply();
 
-        GPSTracker gpsTracker = new GPSTracker(getApplicationContext());
+        new GPSTracker(getApplicationContext());
     }
 
     @Override
@@ -306,21 +303,5 @@ public class RingtonePlayingService extends Service implements
 
     @Override
     public void onProviderDisabled(String s) {
-    }
-
-    public static boolean isDisableWifi() {
-        return disableWifi;
-    }
-
-    public void setDisableWifi(boolean disableWifi) {
-        RingtonePlayingService.disableWifi = disableWifi;
-    }
-
-    public static boolean isDisableMobileData() {
-        return disableMobileData;
-    }
-
-    public void setDisableMobileData(boolean disableMobileData) {
-        RingtonePlayingService.disableMobileData = disableMobileData;
     }
 }

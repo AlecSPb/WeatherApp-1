@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog.OnTimeSetListener;
 import com.philliphsu.clock2.R;
 import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.misc.AlarmController;
@@ -44,7 +45,6 @@ import com.philliphsu.clock2.dialogs.AddLabelDialogController;
 import com.philliphsu.clock2.dialogs.TimePickerDialogController;
 import com.philliphsu.clock2.list.BaseViewHolder;
 import com.philliphsu.clock2.list.OnListItemInteractionListener;
-import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog.OnTimeSetListener;
 import com.philliphsu.clock2.timepickers.Utils;
 import com.philliphsu.clock2.util.FragmentTagUtils;
 import com.philliphsu.clock2.util.TimeTextUtils;
@@ -273,7 +273,7 @@ public abstract class BaseAlarmViewHolder extends BaseViewHolder<Alarm> {
         // mutated for the lifetime of this ViewHolder (even when reused).
         // This solution is robust against dark/light theme changes, whereas using
         // color resources is not.
-        TextView colorsSource = (TextView) itemView.findViewById(R.id.colors_source);
+        TextView colorsSource = itemView.findViewById(R.id.colors_source);
         ColorStateList colors = colorsSource.getTextColors();
         int def = colors.getDefaultColor();
         // Too light

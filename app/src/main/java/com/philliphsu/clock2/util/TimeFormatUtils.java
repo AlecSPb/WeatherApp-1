@@ -23,6 +23,7 @@ import android.content.Context;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import static android.text.format.DateFormat.getTimeFormat;
 
@@ -52,5 +53,12 @@ public final class TimeFormatUtils {
     public static int getMinutes(String time) {
         String[] timeArr = time.split(":");
         return Integer.parseInt(timeArr[1].trim());
+    }
+
+    public static String timeFromMillis(long millis){
+        long second = (millis / 1000) % 60;
+        long minute = (millis / (1000 * 60)) % 60;
+        long hour = (millis / (1000 * 60 * 60)) % 24;
+        return String.format(Locale.getDefault(),"%02d:%02d:%02d", hour, minute, second);
     }
 }

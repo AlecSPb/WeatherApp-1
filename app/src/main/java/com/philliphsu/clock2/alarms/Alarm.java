@@ -25,8 +25,6 @@ import android.os.Parcelable;
 import com.google.auto.value.AutoValue;
 import com.philliphsu.clock2.data.ObjectWithId;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -66,11 +64,6 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
     public abstract boolean vibrates();
     /** Initializes a Builder to the same property values as this instance */
     public abstract Builder toBuilder();
-
-    @Deprecated
-    public static Alarm create(JSONObject jsonObject) {
-        throw new UnsupportedOperationException();
-    }
 
     public void copyMutableFieldsTo(Alarm target) {
         target.setId(this.getId());
@@ -127,10 +120,6 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public boolean[] recurringDays() {
-        return recurringDays;
     }
 
     public void setRecurring(int day, boolean recurring) {

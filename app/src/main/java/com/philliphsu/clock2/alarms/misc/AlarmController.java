@@ -111,13 +111,21 @@ public final class AlarmController {
                 calendar.set(Calendar.MINUTE, TimeFormatUtils.getMinutes(time));
                 calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
-                condRingTime = calendar.getTimeInMillis();
 
-                if (condRingTime <= System.currentTimeMillis()){
+                // If not setted, set the first time
+                if (condRingTime == -1)
+                    condRingTime = calendar.getTimeInMillis();
+
+                // If condRingTime is in the past, add 1 day
+                if (condRingTime <= System.currentTimeMillis())
                     condRingTime += TimeUnit.DAYS.toMillis(1);
-                }
+
+                // If another condition time is before && is scheduled for today
+                if (calendar.getTimeInMillis() < condRingTime && calendar.getTimeInMillis() > System.currentTimeMillis())
+                    condRingTime = calendar.getTimeInMillis();
             }
         }
+        // If there's a condition and is scheduled before main ringing time
         if (condRingTime != -1 && condRingTime < ringAt)
             ringAt = condRingTime;
         final PendingIntent alarmIntent = alarmIntent(alarm, false);

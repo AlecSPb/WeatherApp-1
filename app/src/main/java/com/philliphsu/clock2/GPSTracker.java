@@ -29,6 +29,7 @@ import com.philliphsu.clock2.model.Channel;
 import com.philliphsu.clock2.model.Condition;
 import com.philliphsu.clock2.model.LocationResult;
 import com.philliphsu.clock2.model.Units;
+import com.philliphsu.clock2.model.WeatherMapper;
 import com.philliphsu.clock2.service.GoogleMapsGeocodingService;
 
 import org.json.JSONObject;
@@ -222,10 +223,11 @@ public class GPSTracker implements /*WeatherServiceListener,*/
                                 channel.populate(channelJSON);
 
                                 Condition condition = channel.getItem().getCondition();
+                                int code = condition.getCode();
                                 Units units = channel.getUnits();
                                 String weatherTemperature = mContext.getString(
                                         R.string.temperature_output, condition.getTemperature(), units.getTemperature());
-                                String weatherCondition = condition.getDescription().toLowerCase();
+                                String weatherCondition = new WeatherMapper().getConditionFromCode(code);
                                 String weatherLocation = channel.getLocation();
                                 sendBroadcastMessage(weatherTemperature, weatherCondition, weatherLocation);
                                 Log.i("GPSTracker-Condition", condition.toJSON().toString());

@@ -19,7 +19,11 @@
 
 package com.philliphsu.clock2.util;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 
 /**
  * Created by Phillip Hsu on 8/30/2016.
@@ -32,4 +36,22 @@ public final class ConfigurationUtils {
 
     private ConfigurationUtils() {}
 
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static void enableWifi (Context ctx) {
+        WifiManager wifiManager =
+                (WifiManager)ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+    }
+
+    public static void disableWifi (Context ctx) {
+        WifiManager wifiManager =
+                (WifiManager)ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+    }
 }

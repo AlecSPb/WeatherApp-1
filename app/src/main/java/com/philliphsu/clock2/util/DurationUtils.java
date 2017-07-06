@@ -50,7 +50,6 @@ public class DurationUtils {
         long numSecs = fields[SECONDS]; // only considered for rounding of minutes
         if (numSecs >= 31) {
             numMins++;
-            numSecs = 0; // Not totally necessary since it won't be considered any more
             if (numMins == 60) {
                 numHours++;
                 numMins = 0;

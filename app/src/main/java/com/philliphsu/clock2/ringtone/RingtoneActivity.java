@@ -35,6 +35,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.philliphsu.clock2.BaseActivity;
 import com.philliphsu.clock2.GPSTracker;
 import com.philliphsu.clock2.MainActivity;
@@ -43,6 +45,7 @@ import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.data.AlarmCursor;
 import com.philliphsu.clock2.alarms.misc.AlarmController;
 import com.philliphsu.clock2.ringtone.playback.RingtoneService;
+import com.philliphsu.clock2.util.ConfigurationUtils;
 import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.LocalBroadcastHelper;
 import com.philliphsu.clock2.util.ParcelableUtil;
@@ -72,6 +75,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
     public static final String ACTION_SHOW_SILENCED = "com.philliphsu.clock2.ringtone.action.SHOW_SILENCED";
 
     private static boolean sIsAlive = false;
+    private static boolean wifi = false;
     private T mRingingObject;
 
     @Bind(R.id.title) TextView mHeaderTitle;
@@ -81,6 +85,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
     @Bind(R.id.buttons_container) LinearLayout mButtonsContainer;
     @Bind(R.id.btn_text_left) TextView mLeftButton;
     @Bind(R.id.btn_text_right) TextView mRightButton;
+    @Bind(R.id.adView) AdView mAdView;
 
     protected abstract Class<? extends RingtoneService> getRingtoneServiceClass();
 
@@ -132,6 +137,16 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
 
+        if (!ConfigurationUtils.isNetworkAvailable(getApplicationContext())) {
+            ConfigurationUtils.enableWifi(this);
+            setWifi(true);
+        }
+
+        AdRequest request = new AdRequest.Builder()
+                .addTestDevice("33BE2250B43518CCDA7DE426D04EE232")
+                .build();
+        mAdView.loadAd(request);
+
         final byte[] bytes = getIntent().getByteArrayExtra(EXTRA_RINGING_OBJECT);
         if (bytes == null) {
             throw new IllegalStateException("Cannot start RingtoneActivity without a ringing object");
@@ -153,36 +168,36 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         mLeftButton.setCompoundDrawablesWithIntrinsicBounds(0, getLeftButtonDrawable(), 0, 0);
         mRightButton.setCompoundDrawablesWithIntrinsicBounds(0, getRightButtonDrawable(), 0, 0);
 
-        Intent intent = new Intent(this, getRingtoneServiceClass())
-                .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
+        new GPSTracker(getApplicationContext());
 
-        // Loop over condition to check if anyone has time setted
-        final Alarm oldAlarm = ParcelableUtil.unmarshall(bytes, Alarm.CREATOR);
-        AlarmController alarmCtrl = new AlarmController(getApplicationContext(), null);
-        AlarmCursor cursor = alarmCtrl.getItem(getApplicationContext(), oldAlarm);
-        final LinkedHashMap<String,String> condTime = cursor.getItem().getWeatherConditions();
-        boolean flag = false;
-        for (String time : condTime.values()){
-            // If one has time setted, get weather information
-            if (time != null){
-                new GPSTracker(getApplicationContext());
-                flag = true;
-                break;
-            }
-        }
+        // Re-set the status of Wifi
+//        if (isWifi()){
+//            ConfigurationUtils.disableWifi(this);
+//        }
 
-        // If at least one condition has time, continue check
-        // Else ring now
-        if (flag) {
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                    new BroadcastReceiver() {
-                        @Override
-                        public void onReceive(Context context, Intent intent) {
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        Intent intentRing = new Intent(context, getRingtoneServiceClass())
+                                .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
+                        // Loop over condition to check if anyone has time setted
+                        Alarm oldAlarm = ParcelableUtil.unmarshall(bytes, Alarm.CREATOR);
+                        AlarmController alarmCtrl = new AlarmController(getApplicationContext(), null);
+                        AlarmCursor cursor = alarmCtrl.getItem(getApplicationContext(), oldAlarm);
+                        LinkedHashMap<String, String> condTime = cursor.getItem().getWeatherConditions();
+                        boolean flag = false;
+                        for (String time : condTime.values()) {
+                            // If one has time setted, get weather information
+                            if (time != null) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag) {
                             String condition = intent.getStringExtra(GPSTracker.EXTRA_CONDITION);
-                            Intent intentRing = new Intent(context, getRingtoneServiceClass())
-                                    .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
                             // Check if current condition of weather is the same setted
-                            if (condTime.containsKey(condition)) {
+                            if (condTime.get(condition) != null) {
                                 String time = condTime.get(condition);
                                 String currentTime = new SimpleDateFormat(Constants.TIME_FORMAT, Locale.getDefault()).format(new Date());
 
@@ -208,12 +223,11 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
                             } else {
                                 context.startService(intentRing);
                             }
+                        } else {
+                            startService(intentRing);
                         }
-                    }, new IntentFilter(GPSTracker.ACTION_LOCATION_BROADCAST)
-            );
-        } else {
-            startService(intent);
-        }
+                    }
+                }, new IntentFilter(GPSTracker.ACTION_LOCATION_BROADCAST));
     }
 
     @Override
@@ -300,16 +314,15 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         return false;
     }
 
-    public static boolean isAlive() {
-        return sIsAlive;
-    }
-
     /**
      * Exposed to subclasses so they can force us to stop the
      * ringtone and finish us.
      */
     protected final void stopAndFinish() {
         stopService(new Intent(this, getRingtoneServiceClass()));
+        if (isWifi()){
+            ConfigurationUtils.disableWifi(this);
+        }
         finish();
     }
 
@@ -337,4 +350,12 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
             showAutoSilenced();
         }
     };
+
+    public static boolean isWifi() {
+        return wifi;
+    }
+
+    private void setWifi(boolean value) {
+        wifi = value;
+    }
 }

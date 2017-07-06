@@ -23,13 +23,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -85,7 +83,6 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
     private final ColorStateList mVibrateColors;
     private final ColorStateList mWeatherCondToggleColors;
     private final RingtonePickerDialogController mRingtonePickerController;
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
     public ExpandedAlarmViewHolder(ViewGroup parent, final OnListItemInteractionListener<Alarm> listener,
                                    AlarmController controller) {

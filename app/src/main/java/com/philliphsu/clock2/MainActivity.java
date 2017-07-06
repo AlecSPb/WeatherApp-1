@@ -42,7 +42,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.philliphsu.clock2.alarms.ui.AlarmsFragment;
-import com.philliphsu.clock2.alarms.ui.ExpandedAlarmViewHolder;
 import com.philliphsu.clock2.data.BaseItemCursor;
 import com.philliphsu.clock2.list.RecyclerViewFragment;
 import com.philliphsu.clock2.settings.SettingsActivity;

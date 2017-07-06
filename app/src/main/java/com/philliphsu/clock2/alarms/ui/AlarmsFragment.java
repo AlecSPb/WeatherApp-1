@@ -105,7 +105,7 @@ public class AlarmsFragment extends RecyclerViewFragment<Alarm, BaseAlarmViewHol
     @Override
     public void onResume() {
         super.onResume();
-        new GPSTracker(getContext());
+        //new GPSTracker(getContext());
         Log.d(TAG, "onResume()");
 
         // Show the pending Snackbar, if any, that was prepared for us

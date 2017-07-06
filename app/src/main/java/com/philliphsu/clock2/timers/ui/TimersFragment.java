@@ -33,11 +33,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.philliphsu.clock2.timers.EditTimerActivity;
-import com.philliphsu.clock2.timers.data.AsyncTimersTableUpdateHandler;
 import com.philliphsu.clock2.R;
 import com.philliphsu.clock2.list.RecyclerViewFragment;
+import com.philliphsu.clock2.timers.EditTimerActivity;
 import com.philliphsu.clock2.timers.Timer;
+import com.philliphsu.clock2.timers.data.AsyncTimersTableUpdateHandler;
 import com.philliphsu.clock2.timers.data.TimerCursor;
 import com.philliphsu.clock2.timers.data.TimersListCursorLoader;
 
@@ -70,7 +70,7 @@ public class TimersFragment extends RecyclerViewFragment<Timer, TimerViewHolder,
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         final Resources r = getResources();
-        if (getOrientation(r) == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getOrientation(r) == Configuration.ORIENTATION_LANDSCAPE && view != null) {
             RecyclerView list = findById(view, R.id.list);
             int cardViewMargin = r.getDimensionPixelSize(R.dimen.cardview_margin);
             list.setPaddingRelative(cardViewMargin/*start*/, cardViewMargin/*top*/, 0, list.getPaddingBottom());

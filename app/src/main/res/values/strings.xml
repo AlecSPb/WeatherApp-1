@@ -162,6 +162,7 @@
     <!-- End image content descriptions -->
 
     <!-- Weather alarm clock condition -->
+    <string name="sunny">sunny</string>
     <string name="rainy">rainy</string>
     <string name="cloudy">cloudy</string>
     <string name="snowy">snowy</string>
