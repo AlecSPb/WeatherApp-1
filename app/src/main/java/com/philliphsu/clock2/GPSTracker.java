@@ -120,7 +120,7 @@ public class GPSTracker implements /*WeatherServiceListener,*/
 
     @Override
     public void onLocationChanged(Location location) {
-        geocodingService.refreshLocation(location);
+        geocodingService.refreshLocation(mContext, location);
     }
 
     @Override

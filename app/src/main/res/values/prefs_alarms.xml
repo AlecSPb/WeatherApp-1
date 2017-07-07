@@ -110,4 +110,28 @@
         <item>@string/value_sunday</item>
         <item>@string/value_monday</item>
     </string-array>
+
+    <string name="pref_default_unit_key">C</string>
+    <string name="pref_geolocation_enabled_key">geolocation_enabled</string>
+    <string name="pref_manual_location_key">manual_location</string>
+    <string name="pref_cached_location_key">cached_location</string>
+    <string name="pref_temperature_unit_key">temperature_unit</string>
+    <string name="pref_vibration_enabled_key">vibration_enabled</string>
+    <string name="pref_gradual_awakening_key">gradual_awakening</string>
+    <string-array name="pref_temperature_unit_titles">
+        <item>&#176;C</item>
+        <item>&#176;F</item>
+    </string-array>
+    <string-array name="pref_temperature_unit_values">
+        <item>C</item>
+        <item>F</item>
+    </string-array>
+
+    <string name="pref_title_enable_geolocation">Enable GeoLocation</string>
+    <string name="pref_description_enable_geolocation">Automatically obtain weather information based on my current location</string>
+    <string name="pref_title_gradual_awakening">Gradual awakening</string>
+    <string name="pref_gradual_awakening">Enable or disable incremental volume</string>
+    <string name="pref_title_manual_location">Manual Location</string>
+    <string name="pref_default_location">Austin, TX</string>
+    <string name="pref_title_temperature_unit">Temperature Unit</string>
 </resources>

@@ -19,14 +19,18 @@
 
 package com.philliphsu.clock2.settings;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.preference.RingtonePreference;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 
@@ -89,7 +93,7 @@ public class ThemedRingtonePreference extends RingtonePreference
         //     `RingtoneManager.getActualDefaultRingtoneUri(
         //         getContext(), RingtoneManager.TYPE_ALARM).toString();`
         // but skips the toString().
-        return Settings.System.getString(getContext().getContentResolver(), Settings.System.ALARM_ALERT);
+        return Settings.System.getString(getContext().getContentResolver(), Settings.System.RINGTONE);
     }
 
     @Override
@@ -106,6 +110,12 @@ public class ThemedRingtonePreference extends RingtonePreference
 
     private RingtonePickerDialogController newController() {
         // TODO: BAD!
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity)getContext(), new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+            }, 0x00001);
+        }
         AppCompatActivity a = (AppCompatActivity) getContext();
         return new RingtonePickerDialogController(a.getSupportFragmentManager(), this);
     }

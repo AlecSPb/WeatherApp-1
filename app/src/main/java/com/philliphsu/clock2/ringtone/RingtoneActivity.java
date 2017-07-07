@@ -170,11 +170,6 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
 
         new GPSTracker(getApplicationContext());
 
-        // Re-set the status of Wifi
-//        if (isWifi()){
-//            ConfigurationUtils.disableWifi(this);
-//        }
-
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
                 new BroadcastReceiver() {
                     @Override

@@ -19,16 +19,20 @@
 
 package com.philliphsu.clock2.alarms.ui;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
 import android.support.annotation.IdRes;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -155,6 +159,13 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
                     }
                 }
         );
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity)getContext(), new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+            }, 0x00001);
+        }
     }
 
     @Override
@@ -345,7 +356,7 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
         // which will resolved to the actual sound when played").
         String ringtone = getAlarm().ringtone();
         return ringtone.isEmpty() ?
-                RingtoneManager.getActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_ALARM)
+                RingtoneManager.getActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_RINGTONE)
                 : Uri.parse(ringtone);
     }
 

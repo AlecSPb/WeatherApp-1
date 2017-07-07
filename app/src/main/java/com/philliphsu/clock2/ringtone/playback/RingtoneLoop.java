@@ -23,12 +23,17 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+
+import com.philliphsu.clock2.R;
 
 import java.io.IOException;
 
+import static com.philliphsu.clock2.util.Constants.VOLUME_INCREASE_DELAY;
+import static com.philliphsu.clock2.util.Constants.VOLUME_INCREASE_STEP;
+
 /**
- * Created by Phillip Hsu on 9/5/2016.
- *
  * A MediaPlayer configured to play a ringtone in a loop.
  */
 public final class RingtoneLoop {
@@ -37,12 +42,33 @@ public final class RingtoneLoop {
     private final AudioManager mAudioManager;
     private final Uri mUri;
 
+    private float mVolumeLevel;
+    private int maxVolume;
     private MediaPlayer mMediaPlayer;
+    private Handler mHandler = new Handler();
+    private boolean gradualAwakening = false;
+
+    private Runnable mVolumeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // increase volume level until reach max value
+            if (mMediaPlayer != null && mVolumeLevel < maxVolume) {
+                mVolumeLevel += VOLUME_INCREASE_STEP;
+                mMediaPlayer.setVolume(mVolumeLevel, mVolumeLevel);
+                // set next increase in 600ms
+                mHandler.postDelayed(mVolumeRunnable, VOLUME_INCREASE_DELAY);
+            }
+        }
+    };
 
     public RingtoneLoop(Context context, Uri uri) {
         mContext = context;
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mUri = uri;
+        AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        gradualAwakening = PreferenceManager.getDefaultSharedPreferences(mContext).
+                getBoolean(mContext.getString(R.string.pref_gradual_awakening_key), false);
     }
 
     public void play() {
@@ -58,6 +84,11 @@ public final class RingtoneLoop {
                 // "For files, it is OK to call prepare(), which blocks until
                 // MediaPlayer is ready for playback."
                 mMediaPlayer.prepare();
+                if (gradualAwakening) {
+                    mHandler.postDelayed(mVolumeRunnable, VOLUME_INCREASE_DELAY);
+                } else {
+                    mMediaPlayer.setVolume(maxVolume, maxVolume);
+                }
                 mMediaPlayer.start();
             }
         } catch (SecurityException | IOException e) {
