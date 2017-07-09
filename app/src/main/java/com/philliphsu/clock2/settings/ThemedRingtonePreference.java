@@ -93,7 +93,7 @@ public class ThemedRingtonePreference extends RingtonePreference
         //     `RingtoneManager.getActualDefaultRingtoneUri(
         //         getContext(), RingtoneManager.TYPE_ALARM).toString();`
         // but skips the toString().
-        return Settings.System.getString(getContext().getContentResolver(), Settings.System.RINGTONE);
+        return Settings.System.getString(getContext().getContentResolver(), Settings.System.ALARM_ALERT);
     }
 
     @Override
@@ -109,12 +109,11 @@ public class ThemedRingtonePreference extends RingtonePreference
     }
 
     private RingtonePickerDialogController newController() {
-        // TODO: BAD!
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-            }, 0x00001);
+            }, 2);
         }
         AppCompatActivity a = (AppCompatActivity) getContext();
         return new RingtonePickerDialogController(a.getSupportFragmentManager(), this);

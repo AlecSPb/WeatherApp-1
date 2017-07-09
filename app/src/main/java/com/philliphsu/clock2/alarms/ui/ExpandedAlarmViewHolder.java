@@ -164,7 +164,7 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-            }, 0x00001);
+            }, 2);
         }
     }
 
@@ -356,7 +356,7 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
         // which will resolved to the actual sound when played").
         String ringtone = getAlarm().ringtone();
         return ringtone.isEmpty() ?
-                RingtoneManager.getActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_RINGTONE)
+                RingtoneManager.getActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_ALARM)
                 : Uri.parse(ringtone);
     }
 

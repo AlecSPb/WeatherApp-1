@@ -52,6 +52,12 @@ public final class ConfigurationUtils {
     public static void disableWifi (Context ctx) {
         WifiManager wifiManager =
                 (WifiManager)ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(true);
+        wifiManager.setWifiEnabled(false);
+    }
+
+    public static boolean isWifiEnabled (Context ctx) {
+        WifiManager wifiManager =
+                (WifiManager)ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return wifiManager.isWifiEnabled();
     }
 }

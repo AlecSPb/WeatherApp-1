@@ -20,6 +20,7 @@
 package com.philliphsu.clock2;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -382,6 +383,25 @@ public class MainActivity extends BaseActivity {
 
         public Fragment getFragment(int position) {
             return mFragments.get(position);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    Intent intentSettings = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    intentSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getApplicationContext().startActivity(intentSettings);
+                }
+            }
+            case 2: {
+            }
         }
     }
 }

@@ -59,6 +59,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.philliphsu.clock2.util.ConfigurationUtils.isNetworkAvailable;
+import static com.philliphsu.clock2.util.ConfigurationUtils.isWifiEnabled;
 import static com.philliphsu.clock2.util.TimeFormatUtils.getHour;
 import static com.philliphsu.clock2.util.TimeFormatUtils.getMinutes;
 
@@ -76,6 +78,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
 
     private static boolean sIsAlive = false;
     private static boolean wifi = false;
+    private static boolean needToRing = false;
     private T mRingingObject;
 
     @Bind(R.id.title) TextView mHeaderTitle;
@@ -139,13 +142,8 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
 
         if (!ConfigurationUtils.isNetworkAvailable(getApplicationContext())) {
             ConfigurationUtils.enableWifi(this);
-            setWifi(true);
+            wifi = true;
         }
-
-        AdRequest request = new AdRequest.Builder()
-                .addTestDevice("33BE2250B43518CCDA7DE426D04EE232")
-                .build();
-        mAdView.loadAd(request);
 
         final byte[] bytes = getIntent().getByteArrayExtra(EXTRA_RINGING_OBJECT);
         if (bytes == null) {
@@ -168,8 +166,13 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         mLeftButton.setCompoundDrawablesWithIntrinsicBounds(0, getLeftButtonDrawable(), 0, 0);
         mRightButton.setCompoundDrawablesWithIntrinsicBounds(0, getRightButtonDrawable(), 0, 0);
 
-        new GPSTracker(getApplicationContext());
-
+        if (isNetworkAvailable(getApplicationContext())) {
+            new GPSTracker(getApplicationContext());
+        } else {
+            Intent intentRing = new Intent(getApplicationContext(), getRingtoneServiceClass())
+                    .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
+            startService(intentRing);
+        }
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
@@ -212,17 +215,29 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
                                     AlarmController alarmController = new AlarmController(context, null);
                                     alarmController.scheduleAlarm(newAlarm, false);
                                     Intent intentMain = new Intent(getApplicationContext(), MainActivity.class);
-                                    intentMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intentMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     context.startActivity(intentMain);
                                 }
-                            } else {
+                            } else if(needToRing){
+                                needToRing = false;
                                 context.startService(intentRing);
+                            } else {
+                                needToRing = true;
+                                AlarmController alarmController = new AlarmController(context, null);
+                                alarmController.scheduleAlarm(oldAlarm, false);
+                                Intent intentMain = new Intent(getApplicationContext(), MainActivity.class);
+                                intentMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intentMain);
                             }
                         } else {
                             startService(intentRing);
                         }
                     }
                 }, new IntentFilter(GPSTracker.ACTION_LOCATION_BROADCAST));
+        AdRequest request = new AdRequest.Builder()
+                .addTestDevice("33BE2250B43518CCDA7DE426D04EE232")
+                .build();
+        mAdView.loadAd(request);
     }
 
     @Override
@@ -315,7 +330,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
      */
     protected final void stopAndFinish() {
         stopService(new Intent(this, getRingtoneServiceClass()));
-        if (isWifi()){
+        if (isWifiEnabled(getApplicationContext()) && wifi){
             ConfigurationUtils.disableWifi(this);
         }
         finish();
@@ -345,12 +360,4 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
             showAutoSilenced();
         }
     };
-
-    public static boolean isWifi() {
-        return wifi;
-    }
-
-    private void setWifi(boolean value) {
-        wifi = value;
-    }
 }

@@ -97,7 +97,8 @@ public class GPSTracker implements /*WeatherServiceListener,*/
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity)mContext, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION,
-            }, 0x00001);
+            }, 1);
+
 
             return;
         }

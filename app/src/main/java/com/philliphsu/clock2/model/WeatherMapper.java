@@ -21,18 +21,20 @@ public class WeatherMapper {
     private ArrayList<Integer> windyList  = new ArrayList<>(Arrays.asList(windy));
 
     public String getConditionFromCode(int code){
-        if (sunnyList.contains(code)){
-            return getWeatherCondition().get(0);
-        } else if (rainyList.contains(code)){
-            return getWeatherCondition().get(1);
-        } else if (cloudyList.contains(code)){
-            return getWeatherCondition().get(2);
-        } else if (snowyList.contains(code)) {
-            return getWeatherCondition().get(3);
-        } else if (foggyList.contains(code)) {
-            return getWeatherCondition().get(4);
-        } else if (windyList.contains(code)) {
-            return getWeatherCondition().get(5);
+        if (getWeatherCondition().size() > 0) {
+            if (sunnyList.contains(code)) {
+                return getWeatherCondition().get(0);
+            } else if (rainyList.contains(code)) {
+                return getWeatherCondition().get(1);
+            } else if (cloudyList.contains(code)) {
+                return getWeatherCondition().get(2);
+            } else if (snowyList.contains(code)) {
+                return getWeatherCondition().get(3);
+            } else if (foggyList.contains(code)) {
+                return getWeatherCondition().get(4);
+            } else if (windyList.contains(code)) {
+                return getWeatherCondition().get(5);
+            }
         }
         return "";
     }
