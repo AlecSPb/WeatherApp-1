@@ -21,12 +21,12 @@
 <resources>
     <string name="title_category_timers">Timers</string>
 
-    <string name="key_timer_ringtone">key_timer_ringtone</string>
+    <string name="key_timer_ringtone" translatable="false">key_timer_ringtone</string>
     <string name="title_timer_ringtone">Ringtone</string>
 
-    <string name="key_timer_vibrate">key_timer_vibrate</string>
-    <string name="title_timer_vibrate">Vibrate</string>
+    <string name="key_timer_vibrate" translatable="false">key_timer_vibrate</string>
+    <string name="title_timer_vibrate">Vibration</string>
 
-    <string name="key_timer_silence_after">key_timer_silence_after</string>
-    <string name="title_timer_silence_after">@string/title_silence_after</string>
+    <string name="key_timer_silence_after" translatable="false">key_timer_silence_after</string>
+    <string name="title_timer_silence_after" translatable="false">@string/title_silence_after</string>
 </resources>

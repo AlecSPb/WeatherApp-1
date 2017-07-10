@@ -41,7 +41,7 @@
         a selectable grid of days laid out by month.
         [CHAR LIMIT=50]
      -->
-    <string name="day_picker_description">Month grid of days</string>
+    <string name="day_picker_description" translatable="false">Month grid of days</string>
     <!--
         Content description for the year selector in the date picker, which displays
         a scrolling, vertical list of years.
@@ -53,21 +53,21 @@
     <!-- Accessibility announcement for the year picker [CHAR LIMIT=NONE] -->
     <string name="select_year">Select year</string>
     <!-- Accessibility description for the item that is currently selected. -->
-    <string name="item_is_selected"><xliff:g id="item" example="2013">%1$s</xliff:g> selected</string>
+    <string name="item_is_selected" translatable="false"><xliff:g id="item" example="2013">%1$s</xliff:g> selected</string>
     <!-- Accessibility announcement when a number that had been typed in is deleted [CHAR_LIMIT=NONE] -->
-    <string name="deleted_key"><xliff:g id="key" example="4">%1$s</xliff:g> deleted</string>
+    <string name="deleted_key" translatable="false"><xliff:g id="key" example="4">%1$s</xliff:g> deleted</string>
 
     <!-- DO NOT TRANSLATE -->
-    <string name="time_placeholder">--</string>
+    <string name="time_placeholder" translatable="false">--</string>
     <!-- DO NOT TRANSLATE -->
-    <string name="time_separator">:</string>
+    <string name="time_separator" translatable="false">:</string>
 
     <!-- DO NOT TRANSLATE -->
-    <string name="radial_numbers_typeface">sans-serif</string>
+    <string name="radial_numbers_typeface" translatable="false">sans-serif</string>
     <!-- DO NOT TRANSLATE -->
-    <string name="sans_serif">sans-serif</string>
+    <string name="sans_serif" translatable="false">sans-serif</string>
 
     <!-- DO NOT TRANSLATE -->
-    <string name="day_of_week_label_typeface">sans-serif</string>
+    <string name="day_of_week_label_typeface" translatable="false">sans-serif</string>
 
 </resources>

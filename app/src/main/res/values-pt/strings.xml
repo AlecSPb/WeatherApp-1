@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Copyright 2017 Phillip Hsu
+  ~
+  ~ This file is part of ClockPlus.
+  ~
+  ~ ClockPlus is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ClockPlus is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ClockPlus.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<resources>
+    <string name="app_name">Clock+</string>
+    <string name="action_settings">Configurações</string>
+
+    <string name="title_activity_ringtone">Clock+</string>
+    <!-- ================================= EDIT ALARM ACTIVITY ==================================-->
+    <string name="title_activity_edit_alarm">EditAlarmActivity</string>
+    <string name="save">Salve</string>
+    <string name="delete">Deletar</string>
+    <string name="default_alarm_time_12h">12:00 SOU.</string>
+    <string name="title_snoozing_until">Dormitar até %1$s</string>
+    <string name="dismiss_now">Remover agora</string>
+    <string name="dismiss">Remover</string>
+    <string name="snooze">Dormitar</string>
+    <string name="alarm_set_for">Despertador ajustado para %1$s a partir de agora.</string>
+    <!-- ==================================== TOASTS ==================================== -->
+    <string name="day_hour_and_minute">1 dia, 1 hora e 1 minuto</string>
+    <string name="days_hour_and_minute">%1$d dias, 1 hora e 1 minuto</string>
+    <string name="days_hours_and_minute">%1$d dias, %2$d horas e 1 minuto</string>
+    <string name="days_hour_and_minutes">%1$d dias, 1 hora e %3$d minutos</string>
+    <string name="days_hours_and_minutes">%1$d dias, %2$d horas e %3$d minutos</string>
+    <string name="day_hours_and_minute">1 dia, %2$d horas e 1 minuto</string>
+    <string name="day_hours_and_minutes">1 dia, %2$d horas e %3$d minutos</string>
+    <string name="day_hour_and_minutes">1 dia, 1 hora e %3$d minutos</string>
+    <string name="day_and_hour">1 dia e 1 hora</string>
+    <string name="days_and_hour">%1$d dias e 1 hora</string>
+    <string name="day_and_hours">1 dia e %2$d horas</string>
+    <string name="days_and_hours">%1$d dias e %2$d horas</string>
+    <string name="day_and_minute">1 dia e 1 minuto</string>
+    <string name="days_and_minute">%1$d dias e 1 minuto</string>
+    <string name="day_and_minutes">1 dia e %3$d minutos</string>
+    <string name="days_and_minutes">%1$d dias e %3$d minutos</string>
+    <string name="hour_and_minute">1 hora e 1 minuto</string>
+    <string name="hour_and_minutes">1 hora e %3$d minutos</string>
+    <string name="hours_and_minute">%2$d horas e 1 minuto</string>
+    <string name="hours_and_minutes">%2$d horas e %3$d minutos</string>
+    <string name="day">1 dia</string>
+    <string name="days">%1$d dias</string>
+    <string name="hour">1 hora</string>
+    <string name="hours">%2$d horas</string>
+    <string name="minute">1 minuto</string>
+    <string name="minutes">%3$d minutos</string>
+    <string name="less_than_one_minute">menos de 1 minuto</string>
+
+    <string name="upcoming_alarm_dismissed">%1$s alarme eliminado.</string>
+    <!-- ==================================== NOTIFICATIONS ==================================== -->
+    <string name="upcoming_alarm">Alarme seguinte</string>
+    <string name="alarm">Alarme</string>
+    <string name="missed_alarm">Alarme faltando</string>
+    <!-- ==================================== MAIN ACTIVITY ==================================== -->
+    <string name="snackbar_item_deleted">%1$s eliminado</string>
+    <string name="snackbar_undo_item_deleted">Cancelando</string>
+    <!-- ======================================================================================= -->
+    <string name="title_activity_settings">Configurações</string>
+    <string name="every_day">Todo dia</string>
+    <string name="am">SOU</string>
+    <string name="pm">PM</string><!-- TODO: Remove or change this placeholder text -->
+    <string name="title_activity_create_timer">CreateTimerActivity</string>
+
+    <string name="timer">Cronômetro</string>
+    <string name="times_up">Acabou o tempo</string>
+    <string name="add_one_minute">Adicione 1 minuto</string>
+    <string name="stop">Pare</string>
+    <string name="timer_expired">Temporizador expirado</string>
+
+    <string name="alarm_auto_silenced_text">Você perdeu o despertador.</string>
+    <string name="timer_auto_silenced_text">Seu temporizador expirou.</string>
+
+    <string name="label">Etiqueta</string>
+    <string name="ringtone">Toque</string>
+    <string name="ringtones">Toques</string>
+
+    <string name="pause">Pausa</string>
+    <string name="resume">Resumir</string>
+
+    <string name="empty_alarms_container">Sem alarmes adicionados</string>
+    <string name="empty_timers_container">Sem temporizadores adicionados</string>
+
+    <string name="stopwatch">Cronômetro</string>
+    <string name="lap">Volta</string>
+    <string name="stopwatch_and_lap_number">Cronômetro \u002d Volta %1$d</string>
+
+    <string name="temperature">Temp</string>
+    <string name="condition">Condição</string>
+    <string name="location">Localização</string>
+    <string name="action_location">Atualizar localização</string>
+    <string name="cache_exception">Sem dados meteorológicos em cache</string>
+    <!-- Image content descriptions -->
+    <string name="clear_digits">Limpar os dígitos</string>
+    <string name="new_lap">Volta nova</string>
+    <string name="stop_lap">Parar o colo</string>
+    <string name="menu">Cardápio</string>
+    <!-- End image content descriptions -->
+    <!-- Weather alarm clock condition -->
+    <string name="sunny">dom</string>
+    <string name="rainy">chuva</string>
+    <string name="cloudy">nuvem</string>
+    <string name="snowy">neve</string>
+    <string name="foggy">névoa</string>
+    <string name="windy">vento</string>
+    <!-- END Weather alarm clock condition -->
+
+    <string name="temperature_output">%1$d°%2$s</string>
+    <string name="done_label">Feito</string>
+    <string name="grid_selector">Seletor de grade</string>
+    <string name="hour_picker_description">Horário circular</string>
+    <string name="local_time">Horário local</string>
+    <string name="minute_picker_description">Minuto circular deslizante</string>
+    <string name="monday">Segunda-feira</string>
+    <string name="number_pad">Teclado numérico</string>
+    <string name="pref_default_location">Lisbon, Lisbon</string>
+    <string name="pref_description_enable_geolocation">Receba automaticamente informações meteorológicas com base na minha localização atual</string>
+    <string name="pref_gradual_awakening">Ativar ou desativar o volume incremental</string>
+    <string name="pref_title_enable_geolocation">Habilitar geolocalização</string>
+    <string name="pref_title_gradual_awakening">Despertar gradual</string>
+    <string name="pref_title_manual_location">Localização manual</string>
+    <string name="pref_title_temperature_unit">Unidade de temperatura</string>
+    <string name="saturday">Sábado</string>
+    <string name="select_day">Selecione mês e dia</string>
+    <string name="select_hours">Selecione horas</string>
+    <string name="select_minutes">Selecione os minutos</string>
+    <string name="select_year">Selecione ano</string>
+    <string name="sunday">Domingo</string>
+    <string name="system_default">Sistema padrão</string>
+    <string name="theme_black">Negro</string>
+    <string name="theme_dark">Sombrio</string>
+    <string name="theme_light">Claro</string>
+    <string name="title_alarm_volume">Volume de alarme</string>
+    <string name="title_category_alarms">Alarmes</string>
+    <string name="title_category_general">Geral</string>
+    <string name="title_category_timers">Temporizadores</string>
+    <string name="title_category_world_clock">Relógio mundial</string>
+    <string name="title_first_day_of_week">Primeiro dia da semana</string>
+    <string name="title_notify_me_of_upcoming_alarms">Avise-me sobre os próximos alarmes</string>
+    <string name="title_show_time_offsets_from">Mostrar deslocamentos de tempo de</string>
+    <string name="title_silence_after">Silêncio após</string>
+    <string name="title_snooze_duration">Duração da soneca</string>
+    <string name="title_system_date_time_settings">Configurações de data e hora do sistema</string>
+    <string name="title_theme">Tema</string>
+    <string name="title_time_picker_style">Relógio de estilo</string>
+    <string name="title_timer_ringtone">Toque</string>
+    <string name="title_timer_vibrate">Vibração</string>
+    <string name="year_picker_description">Lista de ano</string>
+    <string name="minutes_no_val">minutos</string>
+    <string name="hour1">1 hora antes</string>
+    <string name="hour2">2 horas antes</string>
+    <string name="hour3">3 horas antes</string>
+    <string name="hour4">4 horas antes</string>
+    <string name="hour5">5 horas antes</string>
+    <string name="hour6">6 horas antes</string>
+    <string name="hour7">7 horas antes</string>
+    <string name="hour8">8 horas antes</string>
+    <string name="minutes10">10 minutos</string>
+    <string name="minutes15">15 minutos</string>
+    <string name="minutes20">20 minutos</string>
+    <string name="minutes25">25 minutos</string>
+    <string name="minutes30">30 minutos</string>
+    <string name="minutes5">5 minutos</string>
+    <string name="never">Nunca</string>
+</resources>

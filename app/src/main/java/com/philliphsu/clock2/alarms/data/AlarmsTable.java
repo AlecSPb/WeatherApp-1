@@ -21,6 +21,8 @@ package com.philliphsu.clock2.alarms.data;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.philliphsu.clock2.util.Constants;
+
 /**
  * Created by Phillip Hsu on 7/30/2016.
  */
@@ -54,12 +56,12 @@ public final class AlarmsTable {
     public static final String COLUMN_SATURDAY = "saturday";
     public static final String COLUMN_IGNORE_UPCOMING_RING_TIME = "ignore_upcoming_ring_time";
 
-    public static final String COLUMN_SUNNY = "sunny";
-    public static final String COLUMN_RAINY = "rainy";
-    public static final String COLUMN_CLOUDY = "cloudy";
-    public static final String COLUMN_SNOWY = "snowy";
-    public static final String COLUMN_FOGGY = "foggy";
-    public static final String COLUMN_WINDY = "windy";
+    public static final String COLUMN_SUNNY = Constants.getWeatherCondition().get(0);
+    public static final String COLUMN_RAINY = Constants.getWeatherCondition().get(1);
+    public static final String COLUMN_CLOUDY = Constants.getWeatherCondition().get(2);
+    public static final String COLUMN_SNOWY = Constants.getWeatherCondition().get(3);
+    public static final String COLUMN_FOGGY = Constants.getWeatherCondition().get(4);
+    public static final String COLUMN_WINDY = Constants.getWeatherCondition().get(5);
 
     // First sort by ring time in ascending order (smaller values first),
     // then break ties by sorting by id in ascending order.

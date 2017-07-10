@@ -25,6 +25,7 @@ import android.util.Log;
 
 import java.text.DateFormatSymbols;
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * Created by Phillip Hsu on 5/30/2016.
@@ -42,7 +43,7 @@ public final class DaysOfWeek {
     public static final int NUM_DAYS  = 7;
 
     private static final int[] DAYS = new int[NUM_DAYS];
-    private static final String[] LABELS = new DateFormatSymbols().getShortWeekdays();
+    private static final String[] LABELS = new DateFormatSymbols(Locale.getDefault()).getShortWeekdays();
 
     private static DaysOfWeek sInstance;
     private static int sLastPreferredFirstDay;

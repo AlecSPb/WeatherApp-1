@@ -57,25 +57,20 @@ import static com.philliphsu.clock2.list.RecyclerViewFragment.ACTION_SCROLL_TO_S
 import static com.philliphsu.clock2.list.RecyclerViewFragment.EXTRA_SCROLL_TO_STABLE_ID;
 
 public class MainActivity extends BaseActivity {
+    public static final int PAGE_ALARMS = 0;
+    public static final int PAGE_TIMERS = 1;
+    public static final int PAGE_STOPWATCH = 2;
+    public static final int REQUEST_THEME_CHANGE = 5;
+    public static final String EXTRA_SHOW_PAGE = "com.philliphsu.clock2.extra.SHOW_PAGE";
     private static final String TAG = "MainActivity";
-
-    public static final int    PAGE_ALARMS          = 0;
-    public static final int    PAGE_TIMERS          = 1;
-    public static final int    PAGE_STOPWATCH       = 2;
-    public static final int    REQUEST_THEME_CHANGE = 5;
-    public static final String EXTRA_SHOW_PAGE      = "com.philliphsu.clock2.extra.SHOW_PAGE";
-
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private Drawable             mAddItemDrawable;
-
     @Bind(R.id.container)
     ViewPager mViewPager;
-
     @Bind(R.id.fab)
     FloatingActionButton mFab;
-
     @Bind(R.id.tabs)
     TabLayout mTabLayout;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private Drawable mAddItemDrawable;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -342,6 +337,25 @@ public class MainActivity extends BaseActivity {
         return mFab.getWidth() / 2f + margin;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    Intent intentSettings = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    intentSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getApplicationContext().startActivity(intentSettings);
+                }
+            }
+            case 2: {
+            }
+        }
+    }
+
     private static class SectionsPagerAdapter extends FragmentPagerAdapter {
         private final SparseArray<Fragment> mFragments = new SparseArray<>(getCount());
 
@@ -383,25 +397,6 @@ public class MainActivity extends BaseActivity {
 
         public Fragment getFragment(int position) {
             return mFragments.get(position);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    Intent intentSettings = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    intentSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    getApplicationContext().startActivity(intentSettings);
-                }
-            }
-            case 2: {
-            }
         }
     }
 }

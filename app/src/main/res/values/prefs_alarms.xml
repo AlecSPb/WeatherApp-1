@@ -22,7 +22,7 @@
     <string name="title_category_alarms">Alarms</string>
 
     <!-- Time picker style -->
-    <string name="key_time_picker_style">key_time_picker_style</string>
+    <string name="key_time_picker_style" translatable="false">key_time_picker_style</string>
     <string name="title_time_picker_style">Time picker style</string>
     <string name="system_default">System default</string>
     <!-- Internally, we refer to this picker as a numpad because it's concise.
@@ -36,20 +36,20 @@
     </string-array>
 
     <!-- Silence after -->
-    <string name="key_silence_after">key_silence_after</string>
+    <string name="key_silence_after" translatable="false">key_silence_after</string>
     <string name="title_silence_after">Silence after</string>
     <!-- Snooze duration -->
-    <string name="key_snooze_duration">key_snooze_duration</string>
+    <string name="key_snooze_duration" translatable="false">key_snooze_duration</string>
     <string name="title_snooze_duration">Snooze duration</string>
     <!-- Durations for silence after & snooze duration -->
     <string-array name="entries_duration">
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>15 minutes</item>
-        <item>20 minutes</item>
-        <item>25 minutes</item>
-        <item>30 minutes</item>
+        <item>@string/minute</item>
+        <item>@string/minutes5</item>
+        <item>@string/minutes10</item>
+        <item>@string/minutes15</item>
+        <item>@string/minutes20</item>
+        <item>@string/minutes25</item>
+        <item>@string/minutes30</item>
     </string-array>
     <string-array name="values_duration">
         <item>1</item>
@@ -62,22 +62,22 @@
     </string-array>
 
     <!-- Alarm volume -->
-    <string name="key_alarm_volume">key_alarm_volume</string>
+    <string name="key_alarm_volume" translatable="false">key_alarm_volume</string>
     <string name="title_alarm_volume">Alarm volume</string>
 
     <!-- Upcoming alarm threshold -->
-    <string name="key_notify_me_of_upcoming_alarms">key_notify_me_of_upcoming_alarms</string>
+    <string name="key_notify_me_of_upcoming_alarms" translatable="false">key_notify_me_of_upcoming_alarms</string>
     <string name="title_notify_me_of_upcoming_alarms">Notify me of upcoming alarms</string>
     <string-array name="entries_notify_me_of_upcoming_alarms">
-        <item>Never</item>
-        <item>1 hour before</item>
-        <item>2 hours before</item>
-        <item>3 hours before</item>
-        <item>4 hours before</item>
-        <item>5 hours before</item>
-        <item>6 hours before</item>
-        <item>7 hours before</item>
-        <item>8 hours before</item>
+        <item>@string/never</item>
+        <item>@string/hour1</item>
+        <item>@string/hour2</item>
+        <item>@string/hour3</item>
+        <item>@string/hour4</item>
+        <item>@string/hour5</item>
+        <item>@string/hour6</item>
+        <item>@string/hour7</item>
+        <item>@string/hour8</item>
     </string-array>
     <string-array name="values_notify_me_of_upcoming_alarms">
         <item>0</item>
@@ -92,14 +92,14 @@
     </string-array>
 
     <!-- First day of week -->
-    <string name="key_first_day_of_week">key_first_day_of_week</string>
+    <string name="key_first_day_of_week" translatable="false">key_first_day_of_week</string>
     <string name="title_first_day_of_week">First day of week</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
     <string name="monday">Monday</string>
-    <string name="value_saturday">6</string>
-    <string name="value_sunday">0</string>
-    <string name="value_monday">1</string>
+    <string name="value_saturday" translatable="false">6</string>
+    <string name="value_sunday" translatable="false">0</string>
+    <string name="value_monday" translatable="false">1</string>
     <string-array name="entries_first_day_of_week">
         <item>@string/saturday</item>
         <item>@string/sunday</item>
@@ -111,13 +111,13 @@
         <item>@string/value_monday</item>
     </string-array>
 
-    <string name="pref_default_unit_key">C</string>
-    <string name="pref_geolocation_enabled_key">geolocation_enabled</string>
-    <string name="pref_manual_location_key">manual_location</string>
-    <string name="pref_cached_location_key">cached_location</string>
-    <string name="pref_temperature_unit_key">temperature_unit</string>
-    <string name="pref_vibration_enabled_key">vibration_enabled</string>
-    <string name="pref_gradual_awakening_key">gradual_awakening</string>
+    <string name="pref_default_unit_key" translatable="false">C</string>
+    <string name="pref_geolocation_enabled_key" translatable="false">geolocation_enabled</string>
+    <string name="pref_manual_location_key" translatable="false">manual_location</string>
+    <string name="pref_cached_location_key" translatable="false">cached_location</string>
+    <string name="pref_temperature_unit_key" translatable="false">temperature_unit</string>
+    <string name="pref_vibration_enabled_key" translatable="false">vibration_enabled</string>
+    <string name="pref_gradual_awakening_key" translatable="false">gradual_awakening</string>
     <string-array name="pref_temperature_unit_titles">
         <item>&#176;C</item>
         <item>&#176;F</item>
