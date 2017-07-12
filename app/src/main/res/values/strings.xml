@@ -18,7 +18,7 @@
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Clock+</string>
+    <string name="app_name">Weather alarm clock</string>
     <string name="action_settings">Settings</string>
     <string name="section_format" translatable="false">Hello World from section: %1$d</string>
 

@@ -18,7 +18,7 @@
   ~ along with ClockPlus.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <string name="app_name">Clock+</string>
+    <string name="app_name">Sveglia meteo</string>
     <string name="action_settings">Impostazioni</string>
     <string name="title_activity_ringtone">Clock+</string>
     <!-- ================================= EDIT ALARM ACTIVITY ==================================-->
@@ -111,7 +111,7 @@
     <!-- Weather alarm clock condition -->
     <string name="sunny">sole</string>
     <string name="rainy">piogge</string>
-    <string name="cloudy">nuvola</string>
+    <string name="cloudy">nuvole</string>
     <string name="snowy">neve</string>
     <string name="foggy">nebbia</string>
     <string name="windy">vento</string>

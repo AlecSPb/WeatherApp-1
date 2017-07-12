@@ -45,6 +45,7 @@ import com.philliphsu.clock2.alarms.Alarm;
 import com.philliphsu.clock2.alarms.data.AlarmCursor;
 import com.philliphsu.clock2.alarms.misc.AlarmController;
 import com.philliphsu.clock2.ringtone.playback.RingtoneService;
+import com.philliphsu.clock2.timers.Timer;
 import com.philliphsu.clock2.util.ConfigurationUtils;
 import com.philliphsu.clock2.util.Constants;
 import com.philliphsu.clock2.util.LocalBroadcastHelper;
@@ -166,24 +167,26 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         mLeftButton.setCompoundDrawablesWithIntrinsicBounds(0, getLeftButtonDrawable(), 0, 0);
         mRightButton.setCompoundDrawablesWithIntrinsicBounds(0, getRightButtonDrawable(), 0, 0);
 
-        if (isNetworkAvailable(getApplicationContext())) {
+        final Intent intentRing = new Intent(getApplicationContext(), getRingtoneServiceClass())
+                .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
+
+        if (mRingingObject instanceof Timer){
+            startService(intentRing);
+        } else if (isNetworkAvailable(getApplicationContext())) {
             new GPSTracker(getApplicationContext());
         } else {
-            Intent intentRing = new Intent(getApplicationContext(), getRingtoneServiceClass())
-                    .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
             startService(intentRing);
         }
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        Intent intentRing = new Intent(context, getRingtoneServiceClass())
-                                .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
                         // Loop over condition to check if anyone has time setted
                         Alarm oldAlarm = ParcelableUtil.unmarshall(bytes, Alarm.CREATOR);
                         AlarmController alarmCtrl = new AlarmController(getApplicationContext(), null);
                         AlarmCursor cursor = alarmCtrl.getItem(getApplicationContext(), oldAlarm);
                         LinkedHashMap<String, String> condTime = cursor.getItem().getWeatherConditions();
+
                         boolean flag = false;
                         for (String time : condTime.values()) {
                             // If one has time setted, get weather information

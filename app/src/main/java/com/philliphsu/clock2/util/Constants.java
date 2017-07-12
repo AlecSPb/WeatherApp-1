@@ -57,10 +57,10 @@ public class Constants {
     public static void setWeatherConditions(Context ctx) {
         WEATHER_CONDITION.add(ctx.getResources().getString(R.string.sunny));
         WEATHER_CONDITION.add(ctx.getResources().getString(R.string.rainy));
+        WEATHER_CONDITION.add(ctx.getResources().getString(R.string.windy));
         WEATHER_CONDITION.add(ctx.getResources().getString(R.string.cloudy));
         WEATHER_CONDITION.add(ctx.getResources().getString(R.string.snowy));
         WEATHER_CONDITION.add(ctx.getResources().getString(R.string.foggy));
-        WEATHER_CONDITION.add(ctx.getResources().getString(R.string.windy));
     }
 
     public static ArrayList<String> getWeatherCondition() {
