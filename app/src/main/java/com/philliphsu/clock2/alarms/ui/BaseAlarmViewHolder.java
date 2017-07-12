@@ -273,7 +273,7 @@ public abstract class BaseAlarmViewHolder extends BaseViewHolder<Alarm> {
         // mutated for the lifetime of this ViewHolder (even when reused).
         // This solution is robust against dark/light theme changes, whereas using
         // color resources is not.
-        TextView colorsSource = itemView.findViewById(R.id.colors_source);
+        TextView colorsSource = (TextView)itemView.findViewById(R.id.colors_source);
         ColorStateList colors = colorsSource.getTextColors();
         int def = colors.getDefaultColor();
         // Too light

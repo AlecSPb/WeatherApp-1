@@ -59,6 +59,8 @@ import com.philliphsu.clock2.timepickers.Utils;
 import com.philliphsu.clock2.util.FragmentTagUtils;
 import com.philliphsu.clock2.util.TimeFormatUtils;
 
+import java.util.Locale;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 
@@ -273,6 +275,9 @@ public class ExpandedAlarmViewHolder extends BaseAlarmViewHolder {
             mDays[i].setTextColor(mDayToggleColors);
             int weekDay = DaysOfWeek.getInstance(getContext()).weekDayAt(i);
             String label = DaysOfWeek.getLabel(weekDay);
+            if (Locale.getDefault().getLanguage().equals("pt")){
+                label = DaysOfWeek.getLabel(weekDay).substring(0,3)+".";
+            }
             mDays[i].setTextOn(label);
             mDays[i].setTextOff(label);
             mDays[i].setChecked(alarm.isRecurring(weekDay));

@@ -159,12 +159,12 @@
     <!-- End image content descriptions -->
 
     <!-- Weather alarm clock condition -->
-    <string name="sunny">sun</string>
-    <string name="rainy">rain</string>
-    <string name="cloudy">cloud</string>
-    <string name="snowy">snow</string>
-    <string name="foggy">fog</string>
-    <string name="windy">wind</string>
+    <string name="sunny">sunny</string>
+    <string name="rainy">rainy</string>
+    <string name="cloudy">cloudy</string>
+    <string name="snowy">snowy</string>
+    <string name="foggy">foggy</string>
+    <string name="windy">windy</string>
     <!-- END Weather alarm clock condition -->
 
     <string name="condition_time_tag" translatable="false">condition.time.map</string>

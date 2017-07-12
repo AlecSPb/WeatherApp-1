@@ -51,6 +51,9 @@ public final class TimeFormatUtils {
     }
 
     public static int getMinutes(String time) {
+        if (time.contains("AM") || time.contains("PM")){
+            time = time.replace("AM","").replace("PM","");
+        }
         String[] timeArr = time.split(":");
         return Integer.parseInt(timeArr[1].trim());
     }
