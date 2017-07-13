@@ -51,7 +51,7 @@
         <item>@string/minutes25</item>
         <item>@string/minutes30</item>
     </string-array>
-    <string-array name="values_duration">
+    <string-array name="values_duration" translatable="false">
         <item>1</item>
         <item>5</item>
         <item>10</item>
@@ -79,7 +79,7 @@
         <item>@string/hour7</item>
         <item>@string/hour8</item>
     </string-array>
-    <string-array name="values_notify_me_of_upcoming_alarms">
+    <string-array name="values_notify_me_of_upcoming_alarms" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -118,11 +118,11 @@
     <string name="pref_temperature_unit_key" translatable="false">temperature_unit</string>
     <string name="pref_vibration_enabled_key" translatable="false">vibration_enabled</string>
     <string name="pref_gradual_awakening_key" translatable="false">gradual_awakening</string>
-    <string-array name="pref_temperature_unit_titles">
+    <string-array name="pref_temperature_unit_titles" translatable="false">
         <item>&#176;C</item>
         <item>&#176;F</item>
     </string-array>
-    <string-array name="pref_temperature_unit_values">
+    <string-array name="pref_temperature_unit_values" translatable="false">
         <item>C</item>
         <item>F</item>
     </string-array>

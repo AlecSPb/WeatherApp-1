@@ -116,7 +116,6 @@
     <string name="windy">wind</string>
     <!-- END Weather alarm clock condition -->
 
-    <string name="not_set" />
     <string name="temperature_output">%1$d°%2$s</string>
     <string name="default_alarm_time_12h">12:00 AM</string>
     <string name="done_label">Erledigt</string>
@@ -159,7 +158,6 @@
     <string name="title_timer_ringtone">Klingelton</string>
     <string name="title_timer_vibrate">Vibration</string>
     <string name="year_picker_description">Jahrliste</string>
-    <string name="minutes_no_val">minuten</string>
     <string name="hour1">1 Stunde vorher</string>
     <string name="hour2">2 Stunden vorher</string>
     <string name="hour3">3 Stunden vorher</string>

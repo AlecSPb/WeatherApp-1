@@ -186,4 +186,6 @@
     <string name="hour7">7 hours before</string>
     <string name="hour8">8 hours before</string>
     <string name="temperature_output">%1$d&#176;%2$s</string>
+
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3334078095194784/5520720357</string>
 </resources>

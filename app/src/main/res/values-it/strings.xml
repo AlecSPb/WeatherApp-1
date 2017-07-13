@@ -117,7 +117,6 @@
     <string name="windy">vento</string>
     <!-- END Weather alarm clock condition -->
 
-    <string name="not_set"/>
     <string name="temperature_output">%1$d°%2$s</string>
     <string name="done_label">Fatto</string>
     <string name="title_activity_edit_alarm">EditAlarmActivity</string>
@@ -160,7 +159,6 @@
     <string name="title_timer_ringtone">Suoneria</string>
     <string name="title_timer_vibrate">Vibrazione</string>
     <string name="year_picker_description">Lista anno</string>
-    <string name="minutes_no_val">minuti</string>
     <string name="hour1">1 ora prima</string>
     <string name="hour2">2 ore prima</string>
     <string name="hour3">3 ore prima</string>
