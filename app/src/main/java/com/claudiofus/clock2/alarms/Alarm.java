@@ -22,6 +22,7 @@ package com.claudiofus.clock2.alarms;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.claudiofus.clock2.alarms.misc.ConditionsOfWeather;
 import com.claudiofus.clock2.alarms.misc.DaysOfWeek;
 import com.claudiofus.clock2.data.ObjectWithId;
 import com.google.auto.value.AutoValue;
@@ -32,13 +33,13 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.CLOUDY;
-import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.FOGGY;
 import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.NUM_WEATHER_CONDITIONS;
-import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.RAINY;
-import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.SNOWY;
-import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.SUNNY;
-import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.WINDY;
+import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.getCLOUDY;
+import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.getFOGGY;
+import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.getRAINY;
+import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.getSNOWY;
+import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.getSUNNY;
+import static com.claudiofus.clock2.alarms.misc.ConditionsOfWeather.getWINDY;
 
 /**
  * Created by Phillip Hsu on 5/26/2016.
@@ -150,13 +151,14 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
     }
 
     public LinkedHashMap<String, String> initWeatherConditions () {
+        new ConditionsOfWeather();
         weatherConditions = new LinkedHashMap<>(NUM_WEATHER_CONDITIONS);
-        weatherConditions.put(SUNNY, null);
-        weatherConditions.put(RAINY, null);
-        weatherConditions.put(CLOUDY, null);
-        weatherConditions.put(SNOWY, null);
-        weatherConditions.put(FOGGY, null);
-        weatherConditions.put(WINDY, null);
+        weatherConditions.put(getSUNNY(), null);
+        weatherConditions.put(getRAINY(), null);
+        weatherConditions.put(getCLOUDY(), null);
+        weatherConditions.put(getSNOWY(), null);
+        weatherConditions.put(getFOGGY(), null);
+        weatherConditions.put(getWINDY(), null);
         return weatherConditions;
     }
 
@@ -164,7 +166,7 @@ public abstract class Alarm extends ObjectWithId implements Parcelable {
         if (weatherConditions.containsKey(condition)) {
             weatherConditions.put(condition, value);
         } else {
-            throw new IllegalStateException("Condition" + condition + " is not included in:" + weatherConditions.keySet());
+            throw new IllegalStateException("Condition " + condition + " is not included in:" + weatherConditions.keySet());
         }
     }
 
