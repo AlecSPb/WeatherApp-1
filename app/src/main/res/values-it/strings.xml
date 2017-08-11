@@ -25,7 +25,7 @@
     <string name="save">Salva</string>
     <string name="delete">Elimina</string>
     <string name="default_alarm_time_12h">12:00 AM</string>
-    <string name="title_snoozing_until">Sonnecchia fino a% 1 $ s</string>
+    <string name="title_snoozing_until">Sonnecchia fino a %1$s</string>
     <string name="dismiss_now">Interrompi ora</string>
     <string name="dismiss">Interrompi</string>
     <string name="snooze">Sonnecchia</string>

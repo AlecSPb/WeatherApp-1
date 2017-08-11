@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.claudiofus.clock2.BaseActivity;
 import com.claudiofus.clock2.GPSTracker;
-import com.claudiofus.clock2.MainActivity;
 import com.claudiofus.clock2.R;
 import com.claudiofus.clock2.alarms.Alarm;
 import com.claudiofus.clock2.alarms.data.AlarmCursor;
@@ -45,14 +44,13 @@ import com.claudiofus.clock2.alarms.misc.AlarmController;
 import com.claudiofus.clock2.ringtone.playback.RingtoneService;
 import com.claudiofus.clock2.timers.Timer;
 import com.claudiofus.clock2.util.ConfigurationUtils;
-import com.claudiofus.clock2.util.Constants;
 import com.claudiofus.clock2.util.LocalBroadcastHelper;
 import com.claudiofus.clock2.util.ParcelableUtil;
 import com.claudiofus.clock2.util.TimeFormatUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -66,26 +64,45 @@ import butterknife.OnClick;
  * status bar and navigation/system bar) with user interaction.
  */
 public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivity {
-    private static final String TAG = "RingtoneActivity";
-
     // Shared with RingtoneService
     public static final String ACTION_FINISH = "com.claudiofus.clock2.ringtone.action.FINISH";
     public static final String EXTRA_RINGING_OBJECT = "com.claudiofus.clock2.ringtone.extra.RINGING_OBJECT";
     public static final String ACTION_SHOW_SILENCED = "com.claudiofus.clock2.ringtone.action.SHOW_SILENCED";
-
+    private static final String TAG = "RingtoneActivity";
     private static boolean sIsAlive = false;
     private static boolean wifi = false;
     private static boolean needToRing = false;
+    // TODO: Do we need this anymore? I think this broadcast was only sent from
+    // EditAlarmActivity?
+    private final BroadcastReceiver mFinishReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            stopAndFinish();
+        }
+    };
+    @Bind(R.id.title)
+    TextView mHeaderTitle;
+    @Bind(R.id.auto_silenced_container)
+    LinearLayout mAutoSilencedContainer;
+    @Bind(R.id.auto_silenced_text)
+    TextView mAutoSilencedText;
+    @Bind(R.id.ok)
+    Button mOkButton;
+    @Bind(R.id.buttons_container)
+    LinearLayout mButtonsContainer;
+    private final BroadcastReceiver mOnAutoSilenceReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            showAutoSilenced();
+        }
+    };
+    @Bind(R.id.btn_text_left)
+    TextView mLeftButton;
+    @Bind(R.id.btn_text_right)
+    TextView mRightButton;
+    @Bind(R.id.adView)
+    AdView mAdView;
     private T mRingingObject;
-
-    @Bind(R.id.title) TextView mHeaderTitle;
-    @Bind(R.id.auto_silenced_container) LinearLayout mAutoSilencedContainer;
-    @Bind(R.id.auto_silenced_text) TextView mAutoSilencedText;
-    @Bind(R.id.ok) Button mOkButton;
-    @Bind(R.id.buttons_container) LinearLayout mButtonsContainer;
-    @Bind(R.id.btn_text_left) TextView mLeftButton;
-    @Bind(R.id.btn_text_right) TextView mRightButton;
-    @Bind(R.id.adView) AdView mAdView;
 
     protected abstract Class<? extends RingtoneService> getRingtoneServiceClass();
 
@@ -125,7 +142,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
 
     /**
      * @return An implementation of {@link android.os.Parcelable.Creator} that can create
-     *         an instance of the {@link #mRingingObject ringing object}.
+     * an instance of the {@link #mRingingObject ringing object}.
      */
     // TODO: Make abstract when we override this in all RingtoneActivities.
     protected Parcelable.Creator<T> getParcelableCreator() {
@@ -166,7 +183,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         final Intent intentRing = new Intent(getApplicationContext(), getRingtoneServiceClass())
                 .putExtra(EXTRA_RINGING_OBJECT, ParcelableUtil.marshall(mRingingObject));
 
-        if (mRingingObject instanceof Timer){
+        if (mRingingObject instanceof Timer) {
             startService(intentRing);
         } else if (ConfigurationUtils.isNetworkAvailable(getApplicationContext())) {
             new GPSTracker(getApplicationContext());
@@ -181,25 +198,14 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
                         Alarm oldAlarm = ParcelableUtil.unmarshall(bytes, Alarm.CREATOR);
                         AlarmController alarmCtrl = new AlarmController(getApplicationContext(), null);
                         AlarmCursor cursor = alarmCtrl.getItem(getApplicationContext(), oldAlarm);
-                        LinkedHashMap<String, String> condTime = cursor.getItem().getWeatherConditions();
+                        LinkedHashMap<String, String> condTime = cursor.getItem() != null ? cursor.getItem().getWeatherConditions() : null;
 
-                        boolean flag = false;
-                        for (String time : condTime.values()) {
-                            // If one has time setted, get weather information
-                            if (time != null) {
-                                flag = true;
-                                break;
-                            }
-                        }
-                        if (flag) {
+                        // If exists a weather condition time setted
+                        if (getAlarmConditionTime(condTime)){
                             String condition = intent.getStringExtra(GPSTracker.EXTRA_CONDITION);
-                            // Check if current condition of weather is the same setted
-                            if (condTime.get(condition) != null) {
-                                String time = condTime.get(condition);
-                                String currentTime = new SimpleDateFormat(Constants.TIME_FORMAT, Locale.getDefault()).format(new Date());
-
-                                // Check if time is now, if so ring now
-                                // Else schedule with time found
+                            String currentTime = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(new Date());
+                            String time = condTime.get(condition);
+                            if (time != null) {
                                 if (currentTime.equals(time)) {
                                     context.startService(intentRing);
                                 } else {
@@ -213,28 +219,30 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
                                     oldAlarm.copyMutableFieldsTo(newAlarm);
                                     AlarmController alarmController = new AlarmController(context, null);
                                     alarmController.scheduleAlarm(newAlarm, false);
-                                    Intent intentMain = new Intent(getApplicationContext(), MainActivity.class);
-                                    intentMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    context.startActivity(intentMain);
+                                    finish();
                                 }
-                            } else if(needToRing){
-                                needToRing = false;
-                                context.startService(intentRing);
                             } else {
-                                needToRing = true;
-                                AlarmController alarmController = new AlarmController(context, null);
-                                alarmController.scheduleAlarm(oldAlarm, false);
-                                Intent intentMain = new Intent(getApplicationContext(), MainActivity.class);
-                                intentMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(intentMain);
+                                context.startService(intentRing);
                             }
                         } else {
-                            startService(intentRing);
+                            context.startService(intentRing);
                         }
                     }
                 }, new IntentFilter(GPSTracker.ACTION_LOCATION_BROADCAST));
         AdRequest request = new AdRequest.Builder().build();
         mAdView.loadAd(request);
+    }
+
+    private boolean getAlarmConditionTime(LinkedHashMap<String, String> condTimeMap) {
+        if (condTimeMap != null) {
+            for (String time : condTimeMap.values()) {
+                // If one has time setted, get weather information
+                if (time != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -327,7 +335,7 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
      */
     protected final void stopAndFinish() {
         stopService(new Intent(this, getRingtoneServiceClass()));
-        if (ConfigurationUtils.isWifiEnabled(getApplicationContext()) && wifi){
+        if (ConfigurationUtils.isWifiEnabled(getApplicationContext()) && wifi) {
             ConfigurationUtils.disableWifi(this);
         }
         finish();
@@ -341,20 +349,4 @@ public abstract class RingtoneActivity<T extends Parcelable> extends BaseActivit
         mAutoSilencedContainer.setVisibility(View.VISIBLE);
         mButtonsContainer.setVisibility(View.GONE);
     }
-
-    // TODO: Do we need this anymore? I think this broadcast was only sent from
-    // EditAlarmActivity?
-    private final BroadcastReceiver mFinishReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            stopAndFinish();
-        }
-    };
-
-    private final BroadcastReceiver mOnAutoSilenceReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            showAutoSilenced();
-        }
-    };
 }

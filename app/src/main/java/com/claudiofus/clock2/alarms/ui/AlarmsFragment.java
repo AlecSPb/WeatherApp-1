@@ -103,7 +103,7 @@ public class AlarmsFragment extends RecyclerViewFragment<Alarm, BaseAlarmViewHol
     @Override
     public void onResume() {
         super.onResume();
-        new GPSTracker(getContext());
+//        new GPSTracker(getContext());
         Log.d(TAG, "onResume()");
 
         // Show the pending Snackbar, if any, that was prepared for us
@@ -127,6 +127,12 @@ public class AlarmsFragment extends RecyclerViewFragment<Alarm, BaseAlarmViewHol
         getAdapter().expand(mExpandedPosition);
         // We shouldn't continue to keep a reference to this, so clear it.
         mExpandedPosition = RecyclerView.NO_POSITION;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        new GPSTracker(getContext());
     }
 
     @Override

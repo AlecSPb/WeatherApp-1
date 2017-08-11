@@ -216,7 +216,7 @@ public class GPSTracker implements /*WeatherServiceListener,*/
                         JSONObject queryResults = data.optJSONObject(QUERY);
                         if (queryResults != null) {
                             if (queryResults.optInt(COUNT) == 0) {
-                                Toast.makeText(ctx, "ERRORE", Toast.LENGTH_LONG).show();
+                                Toast.makeText(ctx, "ERROR", Toast.LENGTH_LONG).show();
                             } else {
                                 Channel channel = new Channel();
                                 JSONObject channelJSON =
