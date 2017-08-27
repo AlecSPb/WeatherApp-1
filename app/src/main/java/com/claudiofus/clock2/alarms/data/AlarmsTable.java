@@ -56,12 +56,12 @@ public final class AlarmsTable {
     public static final String COLUMN_SATURDAY = "saturday";
     public static final String COLUMN_IGNORE_UPCOMING_RING_TIME = "ignore_upcoming_ring_time";
 
-    public static final String COLUMN_SUNNY = Constants.getWeatherCondition().get(0);
-    public static final String COLUMN_RAINY = Constants.getWeatherCondition().get(1);
-    public static final String COLUMN_CLOUDY = Constants.getWeatherCondition().get(2);
-    public static final String COLUMN_SNOWY = Constants.getWeatherCondition().get(3);
-    public static final String COLUMN_FOGGY = Constants.getWeatherCondition().get(4);
-    public static final String COLUMN_WINDY = Constants.getWeatherCondition().get(5);
+    public static final String COLUMN_SUNNY = Constants.getWeatherCondition().size() >= 1 ? Constants.getWeatherCondition().get(0) : "sunny";
+    public static final String COLUMN_RAINY = Constants.getWeatherCondition().size() >= 2 ? Constants.getWeatherCondition().get(1) : "rainy";
+    public static final String COLUMN_CLOUDY = Constants.getWeatherCondition().size() >= 3 ? Constants.getWeatherCondition().get(2) : "cloudy";
+    public static final String COLUMN_SNOWY = Constants.getWeatherCondition().size() >= 4 ? Constants.getWeatherCondition().get(3) : "snowy";
+    public static final String COLUMN_FOGGY = Constants.getWeatherCondition().size() >= 5 ? Constants.getWeatherCondition().get(4) : "foggy";
+    public static final String COLUMN_WINDY = Constants.getWeatherCondition().size() >= 6 ? Constants.getWeatherCondition().get(5) : "windy";
 
     // First sort by ring time in ascending order (smaller values first),
     // then break ties by sorting by id in ascending order.
